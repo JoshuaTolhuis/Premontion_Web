@@ -1,11 +1,11 @@
 package nl.bioinf.premonition.webcontrol;
 
+import nl.bioinf.premonition.models.Premonition;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -20,10 +20,15 @@ public class UploadController {
 
     private final String UPLOAD_DIR = "src/main/resources/uploads/";
 
-    @GetMapping("/")
-    public String homepage(){
-        return "homepage";
+    @BeforeEach
+    public void PremonitionForm(Model model)
+    {
+        //create a premonition object
+        Premonition pre = new Premonition();
+        //provide premonition object to the model
+        model.addAttribute("Premonition", pre);
     }
+
     @PostMapping("/upload")
     public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
         // check if file is empty
@@ -48,8 +53,8 @@ public class UploadController {
         return "redirect:/";
     }
 
-    @RequestMapping("/upload")
-    public String checkboxController(){
-        return "redirect:/";
+    @GetMapping("/")
+    public String homepage(){
+        return "homepage";
     }
 }
