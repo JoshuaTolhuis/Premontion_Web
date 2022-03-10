@@ -1,4 +1,4 @@
-package nl.bioinf.jotolhuis.premonition.services;
+package nl.bioinf.premonition.services;
 
 import org.springframework.stereotype.Service;
 

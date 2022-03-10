@@ -1,4 +1,4 @@
-package nl.bioinf.jotolhuis.premonition.webcontrol;
+package nl.bioinf.premonition.webcontrol;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -28,7 +28,7 @@ public class UploadController {
     public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
         // check if file is empty
         if (file.isEmpty()) {
-            attributes.addFlashAttribute("message", "Please select a file to upload.");
+            attributes.addFlashAttribute("message", "File was found to be empty");
             return "redirect:/";
         }
     // normalize the file path
