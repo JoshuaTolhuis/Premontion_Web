@@ -1,3 +1,5 @@
+import sys
+
 class StrNode:
     def __init__(self, n1, n2, prob):
         self.name = n1
@@ -140,12 +142,20 @@ def save_network(nodes):
             print(n1_name + "\t" + n2)
 
 if __name__ == "__main__":
-    protein_list = '/Users/jasperbosman/Desktop/TEST_genes.txt'
-    evidenceFile = '/Users/jasperbosman/Desktop/TEST_String_yeast_protein.links.v9.0_filter>=0.7.txt'
-    network_level = 1
-    trim_nodes = True
-    flat_network = True
+   # protein_list = '/Users/jasperbosman/Desktop/TEST_genes.txt'
+   # evidenceFile = '/Users/jasperbosman/Desktop/TEST_String_yeast_protein.links.v9.0_filter>=0.7.txt'
+   # network_level = 1
+   # trim_nodes = True
+   # flat_network = True
 
+    print(len(sys.argv))
+    
+    protein_list = sys.argv[1]
+    evidenceFile = sys.argv[2]
+    network_level = 1 
+    trim_nodes = True 
+    flat_network = True
+    
     string_nodes = read_string_file(evidenceFile)
     base_nodes = read_ioi_list(protein_list)
 
@@ -166,4 +176,4 @@ if __name__ == "__main__":
 
     save_network(networked_nodes)
 
-    print("blablabla")
+    print("premonition operation complete.")

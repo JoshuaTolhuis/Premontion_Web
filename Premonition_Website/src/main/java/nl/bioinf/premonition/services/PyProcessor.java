@@ -1,55 +1,48 @@
 package nl.bioinf.premonition.services;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-@SpringBootApplication
 @RestController
-
 public class PyProcessor {
-    Process mProcess;
+    private Process mProcess;
 
 
     @Value("${data.folder.location}")
     private String genePath;
+    @Value("${python.folder.location}")
+    private String pyPath;
 
     public void runScript(){//String genefile, String proteinfile){
         Process process;
-        System.out.println("Executing Python script.");
-        System.out.println("genePath " + genePath);
-
 
         try{
-            String premonitionScript = "src/main/resources/PythonFiles/premonition.py";
-            String nisseTestFile = "src/main/resources/DEMOPythonScripts/test.py";              //temp var
-            String testFile = "src/main/resources/PythonFiles/testCompare.py";                  //temp var
-            String testProtein = "../DEMOProteinFiles/137 rhymic genes.txt";                    //temp var
-            String testEvidence = "../DEMOProteinFiles/Sc_4932.protein.links.v11_filtered.tsv"; //temp var
+            String premonitionScript = "premonition.py";
+            String testProtein = "137RhymicGenes.txt";                    //temp var
+            String testReference = "Sc_4932.protein.links.v11_filtered.tsv"; //temp var
 
-
-            process = Runtime.getRuntime().exec(new String[]{premonitionScript, testProtein, testEvidence});
+            String cmdline = "python3 " +  pyPath+premonitionScript + " " + genePath+testProtein + " " + genePath+testReference;
+            process = Runtime.getRuntime().exec(cmdline);
             mProcess = process;
+
         }catch(Exception e) {
             System.out.println("Exception Raised" + e);
         }
 
         InputStream stdout = mProcess.getInputStream();
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(stdout,StandardCharsets.UTF_8));
         String line;
         try{
             while((line = reader.readLine()) != null){
-                System.out.println("PyProcessor: "+ line);
-              // mProcess.getErrorStream()
-
-
+                System.out.println("PyProcessor: " + line);
+                System.out.println(mProcess.getErrorStream());
             }
+
         }catch(IOException e){
-            System.out.println("Exception in reading output"+ e.toString());
+            System.out.println("Exception in reading output"+ e);
+
         }
     }
 }
