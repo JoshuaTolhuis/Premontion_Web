@@ -4,13 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class UploadControllerTest {
-    private UploadController uploadController;
+    private PremonitionController uploadController;
 
 
     @BeforeEach
     void createUploadTestingObject(){
         System.out.println("Creating new object");
-        this.uploadController = new UploadController();
+        this.uploadController = new PremonitionController();
     }
 
     @Test

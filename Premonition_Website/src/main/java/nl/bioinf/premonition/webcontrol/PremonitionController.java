@@ -1,7 +1,6 @@
 package nl.bioinf.premonition.webcontrol;
 
 import nl.bioinf.premonition.models.Premonition;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -16,25 +15,23 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 @Controller
-public class UploadController {
+@RequestMapping(value = "premonition")
+public class PremonitionController {
 
     private final String UPLOAD_DIR = "src/main/resources/uploads/";
 
-    @BeforeEach
-    public void PremonitionForm(Model model)
-    {
-        //create a premonition object
-        Premonition pre = new Premonition();
-        //provide premonition object to the model
-        model.addAttribute("Premonition", pre);
+    @GetMapping
+    public String getPremonitionGreeting(Model model, Premonition pre) {
+        model.addAttribute("greeting2", "hello");
+        model.addAttribute("premonitionobject", pre);
+        return "premonition";
     }
-
-    @PostMapping("/upload")
+    @PostMapping
     public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
         // check if file is empty
         if (file.isEmpty()) {
             attributes.addFlashAttribute("message", "File was found to be empty");
-            return "redirect:/";
+            return "premonition";
         }
     // normalize the file path
     String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -49,12 +46,7 @@ public class UploadController {
 
         // return success response
         attributes.addFlashAttribute("message", "You successfully uploaded " + fileName + '!');
-
-        return "redirect:/";
-    }
-
-    @GetMapping("/")
-    public String homepage(){
-        return "homepage";
+//        attributes.addFlashAttribute("containing", "which contains!" +  pre);
+        return "premonition";
     }
 }

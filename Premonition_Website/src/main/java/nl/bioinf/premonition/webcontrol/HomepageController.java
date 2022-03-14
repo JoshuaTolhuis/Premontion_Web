@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @Controller
-@RequestMapping(value="homepage")
+@RequestMapping(value="home")
 public class HomepageController {
     @GetMapping
     public String getGreeting(Model model) {
