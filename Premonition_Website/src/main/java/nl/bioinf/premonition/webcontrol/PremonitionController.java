@@ -21,8 +21,8 @@ public class PremonitionController {
     private final String UPLOAD_DIR = "src/main/resources/uploads/";
 
     @GetMapping
-    public String getPremonitionGreeting(Model model, Premonition pre) {
-        model.addAttribute("greeting2", "hello");
+    private String getPremonitionGreeting(Model model, Premonition pre) {
+        model.addAttribute("greetingpremonitionpage", "Premonition");
         model.addAttribute("premonitionobject", pre);
         return "premonition";
     }
