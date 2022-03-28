@@ -15,18 +15,14 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 @Controller
-@RequestMapping(value = "premonition")
 public class PremonitionController {
 
-    private final String UPLOAD_DIR = "src/main/resources/uploads/";
-
-    @GetMapping
-    private String getPremonitionGreeting(Model model, Premonition pre) {
-        model.addAttribute("greetingpremonitionpage", "Premonition");
-        model.addAttribute("premonitionobject", pre);
+    @RequestMapping(value = "premonition", method = RequestMethod.GET)
+    public String premonitionPage(){
         return "premonition";
     }
-    @PostMapping
+
+    @RequestMapping(value = "premonition", method = RequestMethod.POST)
     public String uploadFile(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
         // check if file is empty
         if (file.isEmpty()) {
@@ -38,7 +34,8 @@ public class PremonitionController {
 
     // save the file on the local file system
         try {
-        Path path = Paths.get(UPLOAD_DIR + fileName);
+            String UPLOAD_DIR = "src/main/resources/uploads/";
+            Path path = Paths.get(UPLOAD_DIR + fileName);
         Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
             e.printStackTrace();
@@ -46,7 +43,13 @@ public class PremonitionController {
 
         // return success response
         attributes.addFlashAttribute("message", "You successfully uploaded " + fileName + '!');
-//        attributes.addFlashAttribute("containing", "which contains!" +  pre);
-        return "premonition";
+        return "premonitionview";
     }
+
+//    @RequestMapping(value = "premoniotion/view", method = RequestMethod.GET)
+//    private String getPremonitionGreeting(Model model, Premonition pre) {
+//        model.addAttribute("greetingpremonitionpage", "Premonition");
+//        model.addAttribute("premonitionobject", pre);
+//        return "premonition";
+//    }
 }
