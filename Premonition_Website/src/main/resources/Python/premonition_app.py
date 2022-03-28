@@ -4,34 +4,21 @@ import numpy as np
 import pandas as pd
 import itertools
 import collections
-
-#ev_file = '/Users/jasperbosman/Desktop/String_yeast_protein.links.v9.0_filter>=0.7.txt'
-#nodes_in_file = '/Users/jasperbosman/Desktop/my_GOI_genes.txt'
-
-##Proteins of interest
-ev_file = '/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Input data/String_files/Sc_4932.protein.links.v11_filtered.tsv'
-##Reverence files
-nodes_in_file = '/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Input data/Gene_lists/137 rhymic genes.txt'
-
-##To save. 
-nodes_out_file = '/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Networks/Sc.my_node_list_PREM.txt'
-cytoscape_file = "/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Networks/Sc.my_cytoscape_file_PREM.txt"
+import argparse
+import sys
+import os
 
 
-ev_file = '/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc_4932.protein.links.v11_filtered.tsv'
-nodes_in_file = '/Users/jasperbosman/Desktop/Temperature_137-Light_35/Temp137-Light42.txt'
-nodes_out_file = '/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc.my_node_list_PREM.txt'
-cytoscape_file = "/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc.my_cytoscape_file_PREM.txt"
+def main(p_args):
+    ev_file = p_args.ev_file
+    nodes_in_file = p_args.nodes_in_file
+    nodes_out_file = p_args.nodes_out_file
+    cytoscape_file = p_args.cytoscape_file
 
+    limited = p_args.limited
+    incl_NRCs = p_args.incl_NRCs
+    remove_edges = p_args.remove_edges
 
-
-
-limited = False     # integer or False
-incl_NRCs = True    # True or False, for the integration of NRCs
-remove_edges = True  # True of False, for removing lowest scoring edges (while keeping all nodes connected)
-
-
-def main():
     goi_set = read_goi_file(nodes_in_file)
     [ev_con_dict, unique_node_set] = read_evidence_file(ev_file)
 
@@ -43,7 +30,7 @@ def main():
     interaction_df = pd.DataFrame(interaction_matrix, columns=unique_node_set, index=unique_node_set)
     limited_inter_df = generate_network(interaction_df, f_goi_set, incl_NRCs)
 
-    print("Pruning network: round 1/2")
+    print("Pruning network: round 1/2\n")
     pruned_inter_df = prune_network(limited_inter_df, f_goi_set)
 
     if remove_edges:
@@ -66,6 +53,43 @@ def main():
     print("Done")
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Premonition: An algorithm for predicting the circadian '
+                                                 'clock-regulated molecular network')
+    parser.add_argument('-e', action="store",
+                        dest="ev_file",
+                        required=True,
+                        help="File path, to network evidence file.txt (node1\tnode2\tinteraction probability)")
+    parser.add_argument('-l', action="store",
+                        dest="nodes_in_file",
+                        required=True,
+                        help="File path, to nodes of interest file.txt, used as seeds for network reconstruction"
+                        "(node1\nnode2\netc)")
+    parser.add_argument('-n', action="store",
+                        dest="nodes_out_file", default="my_node_list.txt",
+                        help="File path, where to store the constructed network "
+                             "(node1\tnode2\tinteraction probability)")
+    parser.add_argument('-c', action="store",
+                        dest="cytoscape_file", default="my_network_file.txt",
+                        help="File path, where to store a list of all nodes in the constructed network. "
+                             "Convenient for Network  styling and GO-analysis.")
+
+    parser.add_argument('-r', action="store",
+                        dest="limited", default=False,
+                        help="Boolean (False) or integer for minimal network-size, when NRCs are removed.")
+
+    parser.add_argument('-i', action="store",
+                        dest="incl_NRCs", default=True,
+                        help="Boolean (True/False) for including NRCs in the network.")
+
+    parser.add_argument('-m', action="store",
+                        dest="remove_edges", default=True,
+                        help="Boolean (True/False) for removing edges within the network while keeping the network"
+                             "connected.")
+
+    return parser.parse_args()
+
+
 def read_goi_file(file):
     """
     Reads the provided notes of interest
@@ -73,11 +97,15 @@ def read_goi_file(file):
     :return: a Set of nodes
     """
     nodes = set()
-    with open(file) as FILE:
-        for line in FILE:
-            line = line.strip()
-            nodes.add(line)
-    return nodes
+    if os.path.isfile(file):
+        with open(file) as FILE:
+            for line in FILE:
+                line = line.strip()
+                nodes.add(line)
+        return nodes
+    else:
+        print("Your provided file " + file + "does not exists")
+        sys.exit(0)
 
 
 def read_evidence_file(file):
@@ -89,16 +117,21 @@ def read_evidence_file(file):
     """
     con_dict = dict()
     node_set = set()
-    with open(file) as FILE:
-        for line in FILE:
-            [node1, node2, prob] = line.strip().split("\t")
-            if node1 not in con_dict.keys():
-                con_dict[node1] = dict()
-            con_dict[node1][node2] = prob
-            # make sure all nodes are accounted for
-            node_set.add(node1)  # Sufficient when interactions are bidirectional provided in de evidence file
-            node_set.add(node2)  # Needed when interactions are uni-directional provided
-    return con_dict, node_set
+    if os.path.isfile(file):
+        with open(file) as FILE:
+            for line in FILE:
+                [node1, node2, prob] = line.strip().split("\t")
+                if node1 not in con_dict.keys():
+                    con_dict[node1] = dict()
+                con_dict[node1][node2] = prob
+
+                # make sure all nodes are accounted for
+                node_set.add(node1)  # Sufficient when interactions are bidirectional provided in de evidence file
+                node_set.add(node2)  # Needed when interactions are uni-directional provided
+        return con_dict, node_set
+    else:
+        print("Your provided file " + file + "does not exists")
+        sys.exit(0)
 
 
 def filter_gois(gois, uniques):
@@ -114,20 +147,18 @@ def filter_gois(gois, uniques):
 def create_int_matrix(ev_dict, nodes):
     """
     :param ev_dict: Dictionary of the provided node connections from the evidence file
-    :param nodes: Set of nodes provided via the goi
+    :param nodes: Set if nodes provided via the goi
     :return: a Pandas Dataframe (connectivity matrix)
     Constructs a Pandas Dataframe from a Dictionary
     """
-    index_dict = {n: i for i, n in enumerate(nodes)}
+    index_dict = dict(zip(nodes, list(range(0, len(nodes)))))
+
     matrix = np.zeros((len(nodes), len(nodes)), dtype=int)
     for node1 in nodes:
         node1_index = index_dict[node1]
-        if node1 in ev_dict.keys():
-            for node2 in ev_dict[node1].keys():
-                node2_index = index_dict[node2]
-                matrix[node1_index, node2_index] = ev_dict[node1][node2]
-        else:
-            print("no evidence entry for node {}".format(node1))
+        for node2 in ev_dict[node1].keys():
+            node2_index = index_dict[node2]
+            matrix[node1_index, node2_index] = ev_dict[node1][node2]
 
     return matrix
 
@@ -190,7 +221,7 @@ def reconstruct_int_df(int_df, n_nodes, gois):
     Based on a set of nodes, a new interaction matrix (Dataframe) is constructed
     """
     print("Reconstructing interacting matrix\n")
-    index_dict = {n: i for i, n in enumerate(n_nodes)}
+    index_dict = dict(zip(n_nodes, list(range(0, len(n_nodes)))))
     matrix = np.zeros((len(n_nodes), len(n_nodes)), dtype=int)
     for node1 in n_nodes:
         node1_index = index_dict[node1]
@@ -210,17 +241,18 @@ def prune_network(int_df, gois):
     :param gois: Set of Nodes provided by the user
     :return: Pandas Dataframe with an reduced interaction matrix
     """
-    print("Ingoing matrix dimensions are: {}".format(int_df.shape))
-    binary_df = int_df.astype(bool).astype(int)
-    diagonal_k = np.diag(np.dot(binary_df, binary_df))
-    all_nodes = int_df.columns.values
-    remove_nodes = all_nodes[np.where(diagonal_k == 0 | 1)[0]]
-
-    to_remove = [x for x in remove_nodes if x not in gois]
-    int_df = int_df.drop(to_remove, axis=0)
-    int_df = int_df.drop(to_remove, axis=1)
-
-    print("Resulting matrix dimensions are: {}\n".format(int_df.shape))
+    run = True
+    while run:
+        run = False
+        binary_df = int_df.astype(bool).astype(int)
+        diagonal_k = np.diag(np.dot(binary_df, binary_df))
+        all_nodes = int_df.columns.values
+        remove_nodes = all_nodes[np.where(diagonal_k == 0 | 1)[0]]
+        for node in remove_nodes:
+            if not (node in gois):
+                int_df = int_df.drop(node, axis=0)
+                int_df = int_df.drop(node, axis=1)
+                run = True
     return int_df
 
 
@@ -300,7 +332,7 @@ def make_sparse_network(int_df, gois):
     :param gois: Set of provided Nodes of interest
     :return: Pandas Dataframe containing a network with the least number of edges possible
     """
-    maximum = int(int_df.stack().max()+1)
+    maximum = int(int_df.stack().max() + 1)
     nb_nodes = int_df.shape[1]
     int_df_bup = int_df.copy()
     int_df_nan = int_df.replace(0, np.nan)
@@ -350,16 +382,21 @@ def write_cytoscape_node_table(all_nodes, gois, out_f):
     super_string = "{}\t{}\n".format("Node_name", "Node_type")
     for node in all_nodes:
         if node in gois:
-            super_string += "{}\t{}\n".format(node, "NOI") ##Nodes of interest die opgegeven zijn
+            super_string += "{}\t{}\n".format(node, "NOI")
         else:
-            super_string += "{}\t{}\n".format(node, "IGN") ##Intergenetic nodes. 
+            super_string += "{}\t{}\n".format(node, "IGN")
     write(super_string, out_f)
 
 
 def write(data, file):
-    with open(file, 'w') as FILE_H:
-        FILE_H.write(data)
+    try:
+        with open(file, 'w') as FILE_H:
+            FILE_H.write(data)
+    except IOError:
+        print("The output file " + file + " could not be written")
+        sys.exit(0)
 
 
 if __name__ == "__main__":
-    main()
+    arguments = parse_arguments()
+    main(arguments)
