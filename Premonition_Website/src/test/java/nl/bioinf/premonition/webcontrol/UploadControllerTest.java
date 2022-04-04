@@ -10,7 +10,6 @@ class UploadControllerTest {
     @BeforeEach
     void createUploadTestingObject(){
         System.out.println("Creating new object");
-        this.uploadController = new PremonitionController();
     }
 
     @Test
