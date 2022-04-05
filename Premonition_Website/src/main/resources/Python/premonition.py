@@ -1,37 +1,53 @@
 #!/usr/bin/python3
 
+from ast import arg
+from tokenize import String
 import numpy as np
 import pandas as pd
 import itertools
 import collections
+import sys
+import argparse
+
 
 #ev_file = '/Users/jasperbosman/Desktop/String_yeast_protein.links.v9.0_filter>=0.7.txt'
 #nodes_in_file = '/Users/jasperbosman/Desktop/my_GOI_genes.txt'
 
 ##Proteins of interest
-ev_file = '/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Input data/String_files/Sc_4932.protein.links.v11_filtered.tsv'
+ev_file = ''#'/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Input data/String_files/Sc_4932.protein.links.v11_filtered.tsv'
 ##Reverence files
-nodes_in_file = '/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Input data/Gene_lists/137 rhymic genes.txt'
+nodes_in_file = ''#'/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Input data/Gene_lists/137 rhymic genes.txt'
 
-##To save. 
-nodes_out_file = '/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Networks/Sc.my_node_list_PREM.txt'
-cytoscape_file = "/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Networks/Sc.my_cytoscape_file_PREM.txt"
-
-
-ev_file = '/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc_4932.protein.links.v11_filtered.tsv'
-nodes_in_file = '/Users/jasperbosman/Desktop/Temperature_137-Light_35/Temp137-Light42.txt'
-nodes_out_file = '/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc.my_node_list_PREM.txt'
-cytoscape_file = "/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc.my_cytoscape_file_PREM.txt"
-
-
-
+##To save
+nodes_out_file = ''# '/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Networks/Sc.my_node_list_PREM.txt'
+cytoscape_file = ''#"/Users/jasperbosman/Desktop/tmp/CGDB/Step-5-cerevisiae-PremenitionNetwork/Networks/Sc.my_cytoscape_file_PREM.txt"
 
 limited = False     # integer or False
 incl_NRCs = True    # True or False, for the integration of NRCs
 remove_edges = True  # True of False, for removing lowest scoring edges (while keeping all nodes connected)
 
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--evidence_file', type=str, required=True, help="A file containing proteins of interest.")
+parser.add_argument('--reference_file', type=str, required=True, help="A file with reference genes for the query.")
+parser.add_argument('--nodes_out', type=str, required=True, help="File to save constructed nodes to.")
+parser.add_argument('--cytoscape_out', type=str, required=True, help="File to save cytoscape node graph data to.")
+parser.add_argument('--NRCs', type=bool, required=False, help="Include NRCs, True or False.")
+parser.add_argument('--remove_edges', type=bool, required=False, help="Remove the lowest scoring edges, True or False.")
+args = parser.parse_args()
+
 
 def main():
+
+    ev_file = args.evidence_file #'/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc_4932.protein.links.v11_filtered.tsv'
+    nodes_in_file = args.reference_file #'/Users/jasperbosman/Desktop/Temperature_137-Light_35/Temp137-Light42.txt'
+    nodes_out_file = args.nodes_out #'/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc.my_node_list_PREM.txt'
+    cytoscape_file = args.cytoscape_out #"/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc.my_cytoscape_file_PREM.txt"
+
+    if(args.NRCs is not None):
+        incl_NRCs = args
+    if(args.remove_edges is not None):
+        remove_edges = args.remove_edges
+
     goi_set = read_goi_file(nodes_in_file)
     [ev_con_dict, unique_node_set] = read_evidence_file(ev_file)
 

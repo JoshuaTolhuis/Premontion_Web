@@ -9,13 +9,16 @@ import java.nio.charset.StandardCharsets;
 public class PyProcessor {
     private Process mProcess;
 
-
     @Value("${data.folder.location}")
     private String genePath;
     @Value("${python.folder.location}")
     private String pyPath;
 
-    public void runScript(){//String genefile, String proteinfile){
+    /**
+     * runs the python Premonotion script and prints any terminal out lines.
+     * No returns. Future arguments are any arguments to be given to Premonition in the form of a string.
+     */
+    public void runScript(){
         Process process;
 
         try{

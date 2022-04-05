@@ -1,5 +1,4 @@
-package nl.bioinf.premonition.webcontrol;
-
+package nl.bioinf.premonition.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,6 @@ import java.util.*;
 @Controller
 @RequestMapping(value="/NodeGUI")
 public class DrawGUI {
-
 
 
 }
