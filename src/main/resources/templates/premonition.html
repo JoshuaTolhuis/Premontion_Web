@@ -19,33 +19,17 @@
   </li>
 </ul>
 
-<form method="POST" th:action="@{/upload}"  enctype="multipart/form-data">
+<form method="POST" th:action="@{/premonition}"  th:object="${premonition}" enctype="multipart/form-data">
   <tr>
-  <td> Limited </td>
-  <input type="range" min="0" max="5" value="3" class="slider" id="myRange">
-  </tr>
+  <p> Limited<input type="range" min="0" max="5" value="3" class="slider" th:field="*{limited}"></p>
+      <p>include NRCs<input value = "includeNRCs" type="checkbox" name="includeNRCs" th:field="*{includeNRCs}"></p>
+      <p>Remove Edges<input value = "removeEdges" type="checkbox" name="removeEdges" th:field="*{removeEdges}"></p>
 
-    <tr>
-      <td>include NRCs</td>
-      <input type="checkbox" name="includeNRCs">
-    </tr>
-    <tr>
-      <td>Remove Edges</td>
-      <input type="checkbox" name="removeEdges">
-    </tr>
-    <tr>
-      <td>Select a file to upload</td>
-      <td><input type="file" name="files" /></td>
-    </tr>
-    <tr>
-      <td>Select a file to upload</td>
-      <td><input type="file" name="files" /></td>
-    </tr>
-    <tr>
-      <td><input type="submit" value="Submit" /></td>
+      <p>Select a file to upload<input type="file" name="files" th:field="*{files}"/></p>
+      <p>Select a file to upload<input type="file" name="files" th:field="*{files}"/></p>
+      <p><input type="submit" value="Submit" /></p>
     </tr>
   </table>
 </form>
-
 </body>
 </html>

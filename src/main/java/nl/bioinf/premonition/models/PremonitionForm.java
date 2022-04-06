@@ -1,19 +1,21 @@
 package nl.bioinf.premonition.models;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import java.io.File;
 import java.util.Objects;
 
 public class PremonitionForm {
-    private File files;
+    private MultipartFile[] files;
     private String removeEdges;
     private String includeNRCs;
     private String limited;
 
-    public File getFiles() {
+    public MultipartFile[] getFiles() {
         return files;
     }
 
-    public void setFiles(File files) {
+    public void setFiles(MultipartFile[] files) {
         this.files = files;
     }
 
