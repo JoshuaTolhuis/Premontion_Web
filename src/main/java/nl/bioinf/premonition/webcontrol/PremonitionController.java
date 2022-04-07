@@ -1,7 +1,10 @@
 package nl.bioinf.premonition.webcontrol;
 
 import nl.bioinf.premonition.models.PremonitionForm;
+import nl.bioinf.premonition.services.PremonitionStarter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,20 +12,29 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 public class PremonitionController {
 
+    private final PremonitionStarter premonitionStarter;
+
+    @Autowired
+    public PremonitionController(PremonitionStarter premonitionStarter) {
+        this.premonitionStarter = premonitionStarter;
+    }
+
     @GetMapping(value = "premonition")
     public String premonitionPage(ModelMap modelMap){
-        modelMap.addAttribute("premonition", new PremonitionForm());
+        modelMap.addAttribute("result", new PremonitionForm());
         return "premonition";
     }
 
     @PostMapping(value = "premonition")
     public String uploadFile(@RequestParam MultipartFile[] files, @RequestParam String includeNRCs,
-                             @RequestParam String removeEdges, @RequestParam String limited, ModelMap modelMap) {
+                             @RequestParam String removeEdges, @RequestParam String limited, @RequestParam String test, Model model) {
         // normalize the file path
-        modelMap.addAttribute("files", files);
-        modelMap.addAttribute("incl_NRC's", includeNRCs);
-        modelMap.addAttribute("removeEdges", removeEdges);
-        modelMap.addAttribute("limited", limited);
+        model.addAttribute("files", files);
+        model.addAttribute("includeNRCs", includeNRCs);
+        model.addAttribute("removeEdges", removeEdges);
+        model.addAttribute("limited", limited);
+        model.addAttribute("test", test);
+        premonitionStarter.callPyProcessor();
         return "viewpage";
     }
 
