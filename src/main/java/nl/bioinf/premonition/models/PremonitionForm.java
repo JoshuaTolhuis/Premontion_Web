@@ -5,6 +5,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.Objects;
 
+/*
+Author: Joshua Tolhuis
+ */
+
+
 public class PremonitionForm {
     private MultipartFile[] files;
     private String removeEdges;
