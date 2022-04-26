@@ -1,13 +1,20 @@
 <!DOCTYPE HTML>
 <html xmlns:th="https://www.thymeleaf.org">
+<script src="https://cytoscape.org/cytoscape.min.js"></script>
+<script th:src="@{js/cytoscape.min.js}" src="/js/cytoscape.min.js"></script>
+
 <head>
     <title>Getting Started: Handling Form Submission</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
 <h1>Result</h1>
-<p text = "test" />
-
 
 </body>
+<script>
+    var cy = cytoscape({
+        container: document.getElementById('cy')
+    });
+
+</script>
 </html>

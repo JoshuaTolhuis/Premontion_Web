@@ -20,9 +20,9 @@ public class PremonitionStarter {
         this.pyProcessor = pyProcessor;
     }
 
-    @GetMapping(value = "/pyProcessor")
-    public String callPyProcessor(){
-        pyProcessor.runScript();
-        return "complete";
-    }
+//    @GetMapping(value = "/pyProcessor")
+//    public String callPyProcessor(){
+//        pyProcessor.runScript();
+//        return "complete";
+//    }
 }

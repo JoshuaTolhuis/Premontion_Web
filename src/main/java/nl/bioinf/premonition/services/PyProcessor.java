@@ -1,5 +1,8 @@
 package nl.bioinf.premonition.services;
+import nl.bioinf.premonition.models.PremonitionForm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -23,13 +26,16 @@ public class PyProcessor {
      * runs the python Premonotion script and prints any terminal out lines.
      * No returns. Future arguments are any arguments to be given to Premonition in the form of a string.
      */
-    public void runScript(){
+    public void runScript( PremonitionForm form){
         Process process;
+
+        System.out.println(form.getFile().getOriginalFilename());
+
 
         try{
             String premonitionScript = "premonition.py";
-            String testProtein = "137RhymicGenes.txt";                    //temp var
-            String testReference = "Sc_4932.protein.links.v11_filtered.tsv"; //temp var
+            String testProtein = StringUtils.cleanPath(form.getFile().getOriginalFilename());;                    //temp var
+            String testReference =StringUtils.cleanPath(form.getRefFile().getOriginalFilename()); //temp var
 
             String cmdline = "python3 " +  pyPath+premonitionScript + " " + genePath+testProtein + " " + genePath+testReference;
             process = Runtime.getRuntime().exec(cmdline);

@@ -1,7 +1,7 @@
 package nl.bioinf.premonition.webcontrol;
 
 import nl.bioinf.premonition.models.PremonitionForm;
-import nl.bioinf.premonition.services.PremonitionStarter;
+import nl.bioinf.premonition.services.PyProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,16 +20,15 @@ import java.nio.file.StandardCopyOption;
 @Controller
 public class PremonitionController {
 
-    private final PremonitionStarter premonitionStarter;
+    private final PyProcessor pyProcessor;;
 
     @Autowired
-    public PremonitionController(PremonitionStarter premonitionStarter) {
-        this.premonitionStarter = premonitionStarter;
+    public PremonitionController(PyProcessor pyProcessor) {
+        this.pyProcessor = pyProcessor;
     }
 
     @GetMapping(value = "premonition")
-    public String premonitionPage(ModelMap modelMap){
-        modelMap.addAttribute("form", new PremonitionForm());
+    public String premonitionPage(){
         return "premonition";
     }
 
@@ -37,7 +36,7 @@ public class PremonitionController {
     public String uploadForm(@RequestParam MultipartFile file, @RequestParam MultipartFile refFile,
                              @RequestParam String includeNRCs,
                              @RequestParam String removeEdges, @RequestParam String limited,
-                             @RequestParam String test, Model model) {
+                             @RequestParam String test, PremonitionForm form) {
 
         /*
         1. appends model
@@ -47,14 +46,13 @@ public class PremonitionController {
          */
 
 //         normalize the file path
-        model.addAttribute("file", file);
-        model.addAttribute("Ref_file", refFile);
-        model.addAttribute("includeNRCs", includeNRCs);
-        model.addAttribute("removeEdges", removeEdges);
-        model.addAttribute("limited", limited);
-        model.addAttribute("test", test);
 
-        System.out.println(model.getAttribute("test"));
+        form.setFile(file);
+        form.setRefFile(refFile);
+        form.setLimited(limited);
+        form.setTest(test);
+        form.setRemoveEdges(removeEdges);
+        form.setIncludeNRCs(includeNRCs);
         
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         String refFileName = StringUtils.cleanPath(refFile.getOriginalFilename());
@@ -72,7 +70,7 @@ public class PremonitionController {
         // return success response
         // attributes.addFlashAttribute("message", "You successfully uploaded " + fileName + '!');
 
-        premonitionStarter.callPyProcessor();
+        pyProcessor.runScript(form);
 
         return "viewpage";
     }
