@@ -4,6 +4,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+/*
+Author: Nils Mooldijk
+ */
+
+
 
 @RestController
 public class PyProcessor {

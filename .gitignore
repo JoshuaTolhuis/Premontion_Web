@@ -7,6 +7,7 @@ build/
 !**/src/test/**/build/
 gradlew
 gradlew.bat
+**/src/main/rescources/Python/
 
 ### STS ###
 .apt_generated
