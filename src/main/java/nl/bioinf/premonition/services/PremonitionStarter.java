@@ -22,7 +22,7 @@ public class PremonitionStarter {
 
     @GetMapping(value = "/pyProcessor")
     public String callPyProcessor(){
-        pyProcessor.runScript();
-        return "complete";
+        return pyProcessor.runScript();
+        //return "complete";
     }
 }

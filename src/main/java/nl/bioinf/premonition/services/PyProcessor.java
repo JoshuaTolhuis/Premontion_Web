@@ -23,36 +23,41 @@ public class PyProcessor {
      * runs the python Premonotion script and prints any terminal out lines.
      * No returns. Future arguments are any arguments to be given to Premonition in the form of a string.
      */
-    public void runScript(){
+    public String runScript(){
         Process process;
-
+        String toReturn = "";
         try{
             String premonitionScript = "premonition.py";
+            String testScript = "test.py -ef hey -rf hoi -no output -co output_cyto";                                //temp var
             String testProtein = "137RhymicGenes.txt";                    //temp var
             String testReference = "Sc_4932.protein.links.v11_filtered.tsv"; //temp var
 
-            String cmdline = "python3 " +  pyPath+premonitionScript + " " + genePath+testProtein + " " + genePath+testReference;
+            String cmdline = "python3 " +  pyPath + testScript; //+ " " + genePath+testProtein + " " + genePath+testReference;
+            //System.out.println(cmdline);
             process = Runtime.getRuntime().exec(cmdline);
             mProcess = process;
+           // toReturn += "\n CMDline: " + cmdline;
 
         }catch(Exception e) {
             System.out.println("Exception Raised" + e);
+            return "Exception Raised" + e;
         }
 
         InputStream stdout = mProcess.getInputStream();
-
         BufferedReader reader = new BufferedReader(new InputStreamReader(stdout,StandardCharsets.UTF_8));
         String line;
         try{
-            while((line = reader.readLine()) != null){
-                System.out.println("PyProcessor: " + line);
-                System.out.println(mProcess.getErrorStream());
+            while((line = reader.readLine()) != null) {
+                //System.out.println("PyProcessor: " + line);
+                //System.out.println(mProcess.getErrorStream());
+                toReturn += line+"\n";
             }
-
+            return toReturn;
         }catch(IOException e){
-            System.out.println("Exception in reading output"+ e);
-
+            System.out.println("Exception in reading output "+ e);
+            return "Exception in reading output "+ e;
         }
+
     }
 }
 
