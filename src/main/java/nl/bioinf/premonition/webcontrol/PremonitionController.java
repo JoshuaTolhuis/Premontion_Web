@@ -10,18 +10,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-<<<<<<< HEAD
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-=======
-/*
-Author: Joshua Tolhuis
- */
 
->>>>>>> cffd3bea6b041e1c830f26f6c0549da6b7bf502f
 
 @Controller
 public class PremonitionController {
