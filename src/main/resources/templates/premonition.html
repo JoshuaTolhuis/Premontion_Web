@@ -19,15 +19,16 @@
   </li>
 </ul>
 
-<form method="POST" th:action="@{/premonition}"  th:object="${premonition}" enctype="multipart/form-data">
+<form method="POST" th:object="${form}" enctype="multipart/form-data">
   <tr>
   <p> Limited<input type="range" min="0" max="5" value="3" class="slider" th:field="*{limited}"></p>
+      <p>test<input type = text th:field="*{test}"/></p>
       <p>include NRCs<input value = "includeNRCs" type="checkbox" name="includeNRCs" th:field="*{includeNRCs}"></p>
       <p>Remove Edges<input value = "removeEdges" type="checkbox" name="removeEdges" th:field="*{removeEdges}"></p>
-
-      <p>Select a file to upload<input type="file" name="files" th:field="*{files}"/></p>
-      <p>Select a file to upload<input type="file" name="files" th:field="*{files}"/></p>
+      <p>Select a file to upload<input type="file" name="file"  th:field="*{file}"/></p>
+      <p>Select a file to upload<input type="file" name="refFile" th:field="*{refFile}"/></p>
       <p><input type="submit" value="Submit" /></p>
+      <p><input type="reset" value="Reset" /></p>
     </tr>
   </table>
 </form>

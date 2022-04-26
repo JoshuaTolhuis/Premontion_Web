@@ -2,12 +2,12 @@ package nl.bioinf.premonition.models;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
 
 public class PremonitionForm {
-    private MultipartFile[] files;
+    private MultipartFile file;
+    private MultipartFile refFile;
     private String removeEdges;
     private String includeNRCs;
     private String limited;
@@ -21,12 +21,19 @@ public class PremonitionForm {
         this.test = test;
     }
 
-    public MultipartFile[] getFiles() {
-        return files;
+    public MultipartFile getRefFile() {
+        return refFile;
     }
 
-    public void setFiles(MultipartFile[] files) {
-        this.files = files;
+    public void setRefFile(MultipartFile refFile) {
+        this.refFile = refFile;
+    }
+    public MultipartFile getFile() {
+        return file;
+    }
+
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
 
     public String getRemoveEdges() {
@@ -58,20 +65,19 @@ public class PremonitionForm {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PremonitionForm that = (PremonitionForm) o;
-        return Arrays.equals(files, that.files) && Objects.equals(removeEdges, that.removeEdges) && Objects.equals(includeNRCs, that.includeNRCs) && Objects.equals(limited, that.limited) && Objects.equals(test, that.test);
+        return Objects.equals(file, that.file) && Objects.equals(refFile, that.refFile) && Objects.equals(removeEdges, that.removeEdges) && Objects.equals(includeNRCs, that.includeNRCs) && Objects.equals(limited, that.limited) && Objects.equals(test, that.test);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(removeEdges, includeNRCs, limited, test);
-        result = 31 * result + Arrays.hashCode(files);
-        return result;
+        return Objects.hash(file, refFile, removeEdges, includeNRCs, limited, test);
     }
 
     @Override
     public String toString() {
         return "PremonitionForm{" +
-                "files=" + Arrays.toString(files) +
+                "file=" + file +
+                ", refFile=" + refFile +
                 ", removeEdges='" + removeEdges + '\'' +
                 ", includeNRCs='" + includeNRCs + '\'' +
                 ", limited='" + limited + '\'' +
