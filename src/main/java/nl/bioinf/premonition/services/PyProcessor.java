@@ -11,8 +11,6 @@ import java.nio.charset.StandardCharsets;
 Author: Nils Mooldijk
  */
 
-
-
 @RestController
 public class PyProcessor {
     private Process mProcess;
@@ -27,9 +25,9 @@ public class PyProcessor {
      * No returns. Future arguments are any arguments to be given to Premonition in the form of a string.
      */
     public String runScript(PremonitionForm form){
-
         Process process;
         String toReturn = "";
+
         try{
             String premonitionScript = "premonition.py";
             String testScript = "test.py -ef hey -rf hoi -no output -co output_cyto";                                //temp var
