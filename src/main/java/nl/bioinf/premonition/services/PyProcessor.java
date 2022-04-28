@@ -39,10 +39,8 @@ public class PyProcessor {
             String testReference =StringUtils.cleanPath(form.getRefFile().getOriginalFilename()); //temp var
 
             String cmdline = "python3 " +  pyPath + testScript; //+ " " + genePath+testProtein + " " + genePath+testReference;
-            //System.out.println(cmdline);
             process = Runtime.getRuntime().exec(cmdline);
             mProcess = process;
-           // toReturn += "\n CMDline: " + cmdline;
 
         }catch(Exception e) {
             System.out.println("Exception Raised" + e);
@@ -54,8 +52,8 @@ public class PyProcessor {
         String line;
         try{
             while((line = reader.readLine()) != null) {
-                //System.out.println("PyProcessor: " + line);
-                //System.out.println(mProcess.getErrorStream());
+                System.out.println(mProcess.getErrorStream());
+                System.out.println(line+"\n");
                 toReturn += line+"\n";
             }
             return toReturn;
