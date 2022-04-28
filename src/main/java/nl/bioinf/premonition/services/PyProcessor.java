@@ -25,6 +25,11 @@ public class PyProcessor {
      * No returns. Future arguments are any arguments to be given to Premonition in the form of a string.
      */
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 0b71a4560d455f85b3a2a750f41dcac364640585
 =======
 
 
@@ -37,8 +42,14 @@ public class PyProcessor {
             String premonitionScript = "premonition.py";
             String testScript = "test.py -ef hey -rf hoi -no output -co output_cyto";                                //temp var
 <<<<<<< HEAD
+<<<<<<< HEAD
             String testProtein = "137RhymicGenes.txt";                    //temp var
             String testReference = "Sc_4932.protein.links.v11_filtered.tsv"; //temp var
+=======
+
+            String testProtein = StringUtils.cleanPath(form.getFile().getOriginalFilename());;                    //temp var
+            String testReference =StringUtils.cleanPath(form.getRefFile().getOriginalFilename()); //temp var
+>>>>>>> 0b71a4560d455f85b3a2a750f41dcac364640585
 =======
 
             String testProtein = StringUtils.cleanPath(form.getFile().getOriginalFilename());;                    //temp var
