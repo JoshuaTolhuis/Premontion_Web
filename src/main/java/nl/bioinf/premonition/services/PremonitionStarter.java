@@ -18,19 +18,10 @@ public class PremonitionStarter {
     public PremonitionStarter(PyProcessor pyProcessor){
         this.pyProcessor = pyProcessor;
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 0b71a4560d455f85b3a2a750f41dcac364640585
-
 //    @GetMapping(value = "/pyProcessor")
 //    public String callPyProcessor(){
 //        return pyProcessor.runScript();
 //
 //    }
-<<<<<<< HEAD
->>>>>>> 0b71a4560d455f85b3a2a750f41dcac364640585
-=======
->>>>>>> 0b71a4560d455f85b3a2a750f41dcac364640585
+
 }
