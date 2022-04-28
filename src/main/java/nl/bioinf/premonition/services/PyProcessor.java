@@ -11,8 +11,6 @@ import java.nio.charset.StandardCharsets;
 Author: Nils Mooldijk
  */
 
-
-
 @RestController
 public class PyProcessor {
     private Process mProcess;
@@ -27,16 +25,13 @@ public class PyProcessor {
      * No returns. Future arguments are any arguments to be given to Premonition in the form of a string.
      */
 
-
     public String runScript(PremonitionForm form){
         Process process;
         String toReturn = "";
+
         try{
             String premonitionScript = "premonition.py";
             String testScript = "test.py -ef hey -rf hoi -no output -co output_cyto";                                //temp var
-
-            String testProtein = StringUtils.cleanPath(form.getFile().getOriginalFilename());;                    //temp var
-            String testReference =StringUtils.cleanPath(form.getRefFile().getOriginalFilename()); //temp var
 
             String cmdline = "python3 " +  pyPath + testScript; //+ " " + genePath+testProtein + " " + genePath+testReference;
             process = Runtime.getRuntime().exec(cmdline);
