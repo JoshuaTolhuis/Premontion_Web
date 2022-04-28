@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
-from ast import arg
+from ast import arg, arguments
+#import asyncio.windows_events
 from tokenize import String
 import numpy as np
 import pandas as pd
@@ -26,25 +27,31 @@ limited = False     # integer or False
 incl_NRCs = True    # True or False, for the integration of NRCs
 remove_edges = True  # True of False, for removing lowest scoring edges (while keeping all nodes connected)
 
-parser = argparse.ArgumentParser(description='Process some integers.')
-parser.add_argument('--evidence_file', type=str, required=True, help="A file containing proteins of interest.")
-parser.add_argument('--reference_file', type=str, required=True, help="A file with reference genes for the query.")
-parser.add_argument('--nodes_out', type=str, required=True, help="File to save constructed nodes to.")
-parser.add_argument('--cytoscape_out', type=str, required=True, help="File to save cytoscape node graph data to.")
-parser.add_argument('--NRCs', type=bool, required=False, help="Include NRCs, True or False.")
-parser.add_argument('--remove_edges', type=bool, required=False, help="Remove the lowest scoring edges, True or False.")
-args = parser.parse_args()
+##arguments
+args = None
+
+##Parses arguments 
+def parseArgs():
+    parser = argparse.ArgumentParser(description='To setup proteins and reference files.')
+    parser.add_argument('-ef', '--evidence_file', type=str, required=True, help="A file containing proteins of interest.")
+    parser.add_argument('-rf', '--reference_file',type=str, required=True, help="A file with reference genes for the query.")
+    parser.add_argument('-no', '--node_output', type=str, required=True, help="File to save constructed nodes to.")
+    parser.add_argument('-co', '--cyto_output',type=str, required=True, help="File to save cytoscape node graph data to.")
+    parser.add_argument('-NRCs', '--include_NRCs', type=bool, required=False, default=True, help="Include NRCs, True or False.")
+    parser.add_argument('-re', '--remove_edges', type=bool, required=False, default=True, help="Remove the lowest scoring edges, True or False.")
+    parsed_arguments = parser.parse_args()
+    return parsed_arguments
 
 
 def main():
 
-    ev_file = args.evidence_file #'/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc_4932.protein.links.v11_filtered.tsv'
+    ev_file =  args.evidence_file #'/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc_4932.protein.links.v11_filtered.tsv'
     nodes_in_file = args.reference_file #'/Users/jasperbosman/Desktop/Temperature_137-Light_35/Temp137-Light42.txt'
-    nodes_out_file = args.nodes_out #'/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc.my_node_list_PREM.txt'
-    cytoscape_file = args.cytoscape_out #"/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc.my_cytoscape_file_PREM.txt"
-
-    if(args.NRCs is not None):
-        incl_NRCs = args
+    nodes_out_file = args.node_output #'/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc.my_node_list_PREM.txt'
+    cytoscape_file = args.cyto_output #"/Users/jasperbosman/Desktop/Temperature_137-Light_35/Sc.my_cytoscape_file_PREM.txt"
+    
+    if(args.include_NRCs is not None):
+        incl_NRCs = args.include_NRCs
     if(args.remove_edges is not None):
         remove_edges = args.remove_edges
 
@@ -378,4 +385,5 @@ def write(data, file):
 
 
 if __name__ == "__main__":
+    args = parseArgs()
     main()
