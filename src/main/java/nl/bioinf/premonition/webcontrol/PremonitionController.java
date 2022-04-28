@@ -3,9 +3,9 @@ package nl.bioinf.premonition.webcontrol;
 import nl.bioinf.premonition.models.PremonitionForm;
 import nl.bioinf.premonition.services.PyProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,10 +25,12 @@ public class PremonitionController {
     @Autowired
     public PremonitionController(PyProcessor pyProcessor) {
         this.pyProcessor = pyProcessor;
+
     }
 
     @GetMapping(value = "premonition")
-    public String premonitionPage(){
+    public String premonitionPage(Model model){
+        model.addAttribute("form", new PremonitionForm());
         return "premonition";
     }
 
@@ -44,8 +46,6 @@ public class PremonitionController {
         3. starts premonition
         4. returns viewpage
          */
-
-//         normalize the file path
 
         form.setFile(file);
         form.setRefFile(refFile);

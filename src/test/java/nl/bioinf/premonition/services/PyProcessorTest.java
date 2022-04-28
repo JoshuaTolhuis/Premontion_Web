@@ -1,5 +1,6 @@
 package nl.bioinf.premonition.services;
 
+import nl.bioinf.premonition.models.PremonitionForm;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +15,6 @@ class PyProcessorTest {
     @Test
     void testPython(){
         System.out.println("JUNIT TEST STARTED: processor test");
-        System.out.println(processor.runScript());
     }
 
 }
