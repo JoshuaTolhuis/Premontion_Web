@@ -1,5 +1,8 @@
 package nl.bioinf.premonition.models;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
@@ -9,7 +12,7 @@ import java.util.Objects;
 Author: Joshua Tolhuis
  */
 
-
+@RestController
 public class PremonitionForm {
     private MultipartFile file;
     private MultipartFile refFile;
