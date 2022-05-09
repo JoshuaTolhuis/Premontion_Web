@@ -3,6 +3,7 @@ import nl.bioinf.premonition.models.PremonitionForm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -19,21 +20,36 @@ public class PyProcessor {
     private String genePath;
     @Value("${python.folder.location}")
     private String pyPath;
+    @Value("${test.folder.location}")
+    private String testDataLocation;
 
     /**
      * runs the python Premonotion script and prints any terminal out lines.
      * No returns. Future arguments are any arguments to be given to Premonition in the form of a string.
      */
-
-    public String runScript(PremonitionForm form){
+    public String runScript(PremonitionForm form, String userid){
         Process process;
         String toReturn = "";
 
+        /* !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        Premonition will add the .json file extension! Only give the session_name as file name!
+        !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
         try{
             String premonitionScript = "premonition.py";
-            String testScript = "test.py -ef hey -rf hoi -no output -co output_cyto";                                //temp var
 
-            String cmdline = "python3 " +  pyPath + testScript; //+ " " + genePath+testProtein + " " + genePath+testReference;
+            String scriptToExecute = String.format("%1$s -ef %2$s -rf %3$s -no %4$s -co %4$s" + "_COut_" + " -NRCs %5$s -re %6$s",
+                    premonitionScript, form.getFile(), form.getRefFile(),
+                    userid, form.getIncludeNRCs(), form.getRemoveEdges());
+
+            //TODO Remove below test variables
+            String testExecute = String.format("%1$s -ef %2$s -rf %3$s -no %4$s -co %4$s" + "_COut_" + " -NRCs %5$s -re %6$s",
+                    premonitionScript, testDataLocation + "genes.txt", testDataLocation + "links.tsv",
+                    "JsonOut/"+userid, true, true); //Temp var
+            String testScript = "test.py -ef hey -rf hoi -no output -co output_cyto"; //temp var
+            //TODO Remove above test variables
+
+
+            String cmdline = "python3 " +  pyPath + testExecute; //Replace "testScript" variable with "scriptToExecute"
             process = Runtime.getRuntime().exec(cmdline);
             mProcess = process;
 

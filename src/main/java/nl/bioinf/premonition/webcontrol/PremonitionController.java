@@ -2,6 +2,7 @@ package nl.bioinf.premonition.webcontrol;
 
 import nl.bioinf.premonition.models.PremonitionForm;
 import nl.bioinf.premonition.services.PyProcessor;
+import nl.bioinf.premonition.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
@@ -9,13 +10,15 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.context.request.RequestContextHolder;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-
+import java.util.Random;
 
 @Controller
 public class PremonitionController {
@@ -38,13 +41,17 @@ public class PremonitionController {
     public String uploadForm(@RequestParam MultipartFile file, @RequestParam MultipartFile refFile,
                              @RequestParam String includeNRCs,
                              @RequestParam String removeEdges, @RequestParam String limited,
-                             @RequestParam String test, PremonitionForm form) {
+                             @RequestParam String test, PremonitionForm form,
+                             HttpSession session) {
+
+        String userid = SessionUtil.getUserID(session);
 
         /*
         1. appends model
         2. saves users files
-        3. starts premonition
-        4. returns viewpage
+        3. getSession ID
+        4. starts premonition
+        5. returns viewpage
          */
 
         form.setFile(file);
@@ -70,7 +77,7 @@ public class PremonitionController {
         // return success response
         // attributes.addFlashAttribute("message", "You successfully uploaded " + fileName + '!');
 
-        pyProcessor.runScript(form);
+        pyProcessor.runScript(form, userid);
 
         return "viewpage";
     }

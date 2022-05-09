@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from ast import arg, arguments
+import json
 #import asyncio.windows_events
 from tokenize import String
 import numpy as np
@@ -9,6 +10,9 @@ import itertools
 import collections
 import sys
 import argparse
+
+# Original author: Dr. Jasper Bosman
+# Edited and adapted for use in web application by: Nils Mooldijk
 
 
 #ev_file = '/Users/jasperbosman/Desktop/String_yeast_protein.links.v9.0_filter>=0.7.txt'
@@ -83,8 +87,10 @@ def main():
         sparse_network_df = prune_network(sparse_network_df, f_goi_set)
 
     print("Writing Cytoscape output\n")
-    write_cytoscape_output(sparse_network_df, cytoscape_file)
-    write_cytoscape_node_table(sparse_network_df.columns.values, goi_set, nodes_out_file)
+    ##write_cytoscape_output(sparse_network_df, cytoscape_file)
+    ##write_cytoscape_node_table(sparse_network_df.columns.values, goi_set, nodes_out_file)
+    write_cytoscape_json_output(sparse_network_df, cytoscape_file)
+    write_json_cytoscape_node_table(sparse_network_df.columns.values, goi_set, nodes_out_file)
 
     print("Done")
 
@@ -355,7 +361,7 @@ def make_sparse_network(int_df, gois):
     return int_df
 
 
-def write_cytoscape_output(df, out_f):
+def write_cytoscape_json_output(df, out_f):
     """
     Transforms the final network (df) to Cytoscape compatible format and writes it to file
     :param df: Pandas Dataframe containing the network
@@ -379,6 +385,38 @@ def write_cytoscape_node_table(all_nodes, gois, out_f):
     write(super_string, out_f)
 
 
+def write_json_output(df, out_f):
+    """
+    Transforms the final network (df) to Cytoscape compatible format and writes it to json file
+    :param df: Pandas Dataframe containing the network
+    :param out_f: a path-String where the output is stored
+    """
+    data_out = []
+    entry_id = 1
+    for node1 in df.columns.values:
+        for node2 in df.index:
+            if df[node1][node2] != 0:
+                data_out.append({"entry_{}".format(entry_id): [node1, node2, df[node1][node2]]})
+                entry_id += 1
+    with open("{}{}".format(out_f, ".json"), 'w') as f:
+        json.dump(data_out, f)
+    
+
+def write_json_cytoscape_node_table(all_nodes, gois, out_f):
+    """
+    creates and saves a nodes out json file for cytoscape.
+    """
+    data_out = []
+    entry_id = 1
+    for node in all_nodes:
+        if node in gois:
+            data_out.append({"entry_{}".format(entry_id): [node, "NOI"]}) ##Nodes of interest die opgegeven zijn
+        else:
+            data_out.append({"entry_{}".format(entry_id): [node, "IGN"]}) ##Intergenetic nodes.
+        entry_id += 1
+    with open("{}{}".format(out_f, ".json"), 'w') as f:
+        json.dump(data_out, f)
+   
 def write(data, file):
     with open(file, 'w') as FILE_H:
         FILE_H.write(data)

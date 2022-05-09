@@ -18,10 +18,4 @@ public class PremonitionStarter {
     public PremonitionStarter(PyProcessor pyProcessor){
         this.pyProcessor = pyProcessor;
     }
-//    @GetMapping(value = "/pyProcessor")
-//    public String callPyProcessor(){
-//        return pyProcessor.runScript();
-//
-//    }
-
 }

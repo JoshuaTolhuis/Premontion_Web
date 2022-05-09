@@ -36,6 +36,7 @@ public class PremonitionForm {
     public void setRefFile(MultipartFile refFile) {
         this.refFile = refFile;
     }
+
     public MultipartFile getFile() {
         return file;
     }
