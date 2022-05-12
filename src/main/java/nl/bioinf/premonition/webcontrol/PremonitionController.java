@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,13 +40,6 @@ public class PremonitionController {
                              @RequestParam String removeEdges, @RequestParam String limited,
                              @RequestParam String test, PremonitionForm form) {
 
-        /*
-        1. appends model
-        2. saves users files
-        3. starts premonition
-        4. returns viewpage
-         */
-
         form.setFile(file);
         form.setRefFile(refFile);
         form.setLimited(limited);
@@ -66,10 +60,9 @@ public class PremonitionController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // return success response
-        // attributes.addFlashAttribute("message", "You successfully uploaded " + fileName + '!');
 
         pyProcessor.runScript(form);
+
 
         return "viewpage";
     }
