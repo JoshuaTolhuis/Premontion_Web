@@ -42,7 +42,7 @@ public class PremonitionController {
                              @RequestParam String includeNRCs,
                              @RequestParam String removeEdges, @RequestParam String limited,
                              @RequestParam String test, PremonitionForm form,
-                             HttpSession session) {
+                             HttpSession session, Model model) {
 
         String userid = SessionUtil.getUserID(session);
 
@@ -78,6 +78,9 @@ public class PremonitionController {
         // attributes.addFlashAttribute("message", "You successfully uploaded " + fileName + '!');
 
         pyProcessor.runScript(form, userid);
+
+        //id
+        model.addAttribute("ID", userid);
 
         return "viewpage";
     }

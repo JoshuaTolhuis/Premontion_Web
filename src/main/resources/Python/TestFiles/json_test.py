@@ -16,7 +16,7 @@ def main():
             id_key = "obj_{}".format(i)
             data_out.append({id_key:[node1, node2]})
             i+=1
-    with open("test_json.json", 'w') as f:
+    with open("../../DataOut/123456.json", 'w') as f:
         json.dump(data_out, f)
     exit(0)
 

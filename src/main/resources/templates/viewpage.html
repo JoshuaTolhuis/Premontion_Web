@@ -3,8 +3,7 @@
 <head>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.1.0/cytoscape.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link th:href="@{/homepage.css}" rel="stylesheet" />
-    <link href="../static/homepage.css" rel="stylesheet"/>
+    <link th:href="@{/homepage.css}" href="../static/homepage.css" rel="stylesheet" />
 </head>
 <body>
 <ul>
@@ -17,45 +16,74 @@
         <a href="aboutus.html" th:href="@{/aboutus}">About Us</a>
     </li>
 </ul>
+<p1 th:text="${ID}">_ID_</p1>
+<p2 th:text="${location}">_Location_</p2>
 <div id="cy" style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px;"></div>
 <script>
 
-    function loadFile(filePath) {
-        var result = null;
-        var xmlhttp = new XMLHttpRequest();
-        xmlhttp.open("GET", filePath, false);
-        xmlhttp.send();
-        if (xmlhttp.status==200) {
-            result = xmlhttp.responseText;
-        }
-        return result;
-    }
-    console.log(loadFile(".txt"))
-
-    var cy = cytoscape({
-        container: document.getElementById('cy'),
-        elements: [
-            { data: { id: 'a' } },
-            { data: { id: 'b' } },
-            {
-                data: {
-                    id: 'ab',
-                    source: 'a',
-                    target: 'b'
-                }
+    var dataLocation = "[[${location}]]";
+    var tempID = "12345" //Temp var delete later.
+    var sessionID = "[[${ID}]]";
+    var fetchedData = null;
+    var url = "check_results"
+    var get_data = function (){
+        $.when(
+            $.getJSON(url + "?user_id=" + tempID, function (data){
+                console.log(data);
+                fetchedData = data;
             }
-        ]
-    });
+        ).then(
+            function(){
+                console.log("Got it!")
+            }
+        ));
 
-    var canvas = document.querySelector('canvas[data-id="layer2-node"]');
-    var context = canvas.getContext('2d');
+        console.log(sessionID + " " + dataLocation);
 
-    // draw rectangle using general canvas method
-    function draw() {
-        context.fillRect(canvas.width / 2.1, 60, 30, 30);
-        requestAnimationFrame(draw);
+
     }
-    draw();
+
+    // Retrieve data every 4 seconds and update the results tables
+    window.setInterval(function(){
+        get_data();
+    }, 4000);
+
+    // function loadFile(filePath) {
+    //     var result = null;
+    //     var xmlhttp = new XMLHttpRequest();
+    //     xmlhttp.open("GET", filePath, false);
+    //     xmlhttp.send();
+    //     if (xmlhttp.status==200) {
+    //         result = xmlhttp.responseText;
+    //     }
+    //     return result;
+    // }
+    // console.log(loadFile(".txt"))
+
+    // var cy = cytoscape({
+    //     container: document.getElementById('cy'),
+    //     elements: [
+    //         { data: { id: 'a' } },
+    //         { data: { id: 'b' } },
+    //         {
+    //             data: {
+    //                 id: 'ab',
+    //                 source: 'a',
+    //                 target: 'b'
+    //             }
+    //         }
+    //     ]
+    // });
+    //
+    // var canvas = document.querySelector('canvas[data-id="layer2-node"]');
+    // var context = canvas.getContext('2d');
+    //
+    // // draw rectangle using general canvas method
+    // function draw() {
+    //     context.fillRect(canvas.width / 2.1, 60, 30, 30);
+    //     requestAnimationFrame(draw);
+    // }
+    // draw();
 </script>
 
 </body>
