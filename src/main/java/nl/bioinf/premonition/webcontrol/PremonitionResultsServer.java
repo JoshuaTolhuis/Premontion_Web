@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 
 
@@ -29,33 +28,61 @@ public class PremonitionResultsServer {
     private String dataOutLocation;
 
 
-    @GetMapping(value="check_results")
+    @GetMapping(value="check_results",
+    produces = "text/plain")
    // @ResponseBody
-    public Response viewPage(@RequestParam(name = "user_id") String userId){
+    public String viewPage(@RequestParam(name = "user_id") String userId){
         Response toReturn = new Response();
         toReturn.setMessage("");
 
-        File f = new File(String.format("%1$s%2$s.json", dataOutLocation, userId));
+        String dataFileLocation = String.format("%1$s%2$s.json", dataOutLocation, userId);
+        File f = new File(dataFileLocation);
         if (f.exists()){
-            toReturn.setData(f);
-            toReturn.setMessage("Ready!");
+            try {
+                String content = contentReader(dataFileLocation);
+                toReturn.setData(content);
+                System.out.println(content);
+                toReturn.setMessage("Ready!");
+                return content;
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
         else{
             toReturn.setMessage("Data not ready yet!");
         }
 
-        return toReturn;
+        return "toReturn";
+    }
+
+    private String contentReader(String fileLocation){
+        StringBuilder contentBuilder = new StringBuilder();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(fileLocation)))
+        {
+            String sCurrentLine;
+            while ((sCurrentLine = br.readLine()) != null)
+            {
+                contentBuilder.append(sCurrentLine);
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return contentBuilder.toString();
     }
 
     public static class Response{
         String message = "not ready";
-        Object data;
+        String data;
 
         public void setMessage(String message) {
             this.message = message;
         }
 
-        public void setData(Object data) {
+        public void setData(String data) {
             this.data = data;
         }
 
@@ -63,7 +90,7 @@ public class PremonitionResultsServer {
             return message;
         }
 
-        public Object getData() {
+        public String getData() {
             return data;
         }
     }
