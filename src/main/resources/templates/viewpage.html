@@ -1,6 +1,7 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.1.0/cytoscape.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link th:href="@{/homepage.css}" rel="stylesheet" />
@@ -21,15 +22,17 @@
 <script>
 
     var dataLocation = "[[${location}]]";
-    var tempID = "12345" //Temp var delete later.
+    var tempID = "123456" //Temp var delete later.
     var sessionID = "[[${ID}]]";
     var fetchedData = null;
     var url = "check_results"
     var get_data = function (){
         $.when(
             $.getJSON(url + "?user_id=" + tempID, function (data){
-                console.log("fetched data " + data);
+                console.log(data)
                 fetchedData = data;
+                console.log("fetched data " + data);
+
             }
         ).then(
             function(){
