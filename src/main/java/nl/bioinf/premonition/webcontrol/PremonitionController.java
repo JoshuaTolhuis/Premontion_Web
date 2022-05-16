@@ -4,7 +4,6 @@ import nl.bioinf.premonition.models.PremonitionForm;
 import nl.bioinf.premonition.services.PyProcessor;
 import nl.bioinf.premonition.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -74,13 +73,12 @@ public class PremonitionController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // return success response
-        // attributes.addFlashAttribute("message", "You successfully uploaded " + fileName + '!');
 
         pyProcessor.runScript(form, userid);
 
         //id
         model.addAttribute("ID", userid);
+
 
         return "viewpage";
     }

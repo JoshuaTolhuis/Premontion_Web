@@ -5,11 +5,13 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title>Premonition</title>
     <h1 th:text="${greeting}">_greeting_</h1>
-    <link th:href="@{/homepage.css}" rel="stylesheet" />
-    <link href="../static/homepage.css" rel="stylesheet"/>
+    <link th:href="@{/stylesheets/homepage.css}" rel="stylesheet" />
+    <link href="../static/stylesheets/homepage.css" rel="stylesheet"/>
 </head>
 <body>
 <ul>
+    <li>
+        <img alt="logo" src="../static/images/logo.jpeg" th:src="@{/images/logo.jpeg}">
     <li>
         <a href="homepage.html" th:href="@{/home}">Home</a>
     <li>
