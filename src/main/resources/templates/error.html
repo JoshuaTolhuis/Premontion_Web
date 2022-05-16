@@ -1,0 +1,23 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:href="@{/stylesheets/homepage.css}" rel="stylesheet" />
+    <link href="../static/stylesheets/homepage.css" rel="stylesheet"/>
+</head>
+<body>
+<h1>Premonition</h1>
+<ul>
+    <li>
+        <img alt="logo" src="../static/images/logo.jpeg" th:src="@{/images/logo.jpeg}">
+    <li>
+        <a href="homepage.html" th:href="@{/home}">Home</a>
+    <li>
+        <a href="premonition.html" th:href="@{/premonition}">Premonition</a>
+    </li>
+    <li>
+        <a href="aboutus.html" th:href="@{/aboutus}">About Us</a>
+    </li>
+</ul>
+<h2>Something went wrong, please return to the website</h2>
+</body>
+</html>

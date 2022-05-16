@@ -5,6 +5,11 @@ h1 {
     font-size: 1.5em;
     text-transform: uppercase;
 }
+h2 {
+    font-family: sans-serif;
+    font-size: 1.5em;
+    text-transform: uppercase;
+}
 
 
 p {
@@ -34,5 +39,6 @@ li a:hover {
     background-color: #111;
 }
 
-img{
+img{ width: 50px;
+    heigth: 50px;
 }

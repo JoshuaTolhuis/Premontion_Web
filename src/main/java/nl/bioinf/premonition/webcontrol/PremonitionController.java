@@ -2,6 +2,7 @@ package nl.bioinf.premonition.webcontrol;
 
 import nl.bioinf.premonition.models.PremonitionForm;
 import nl.bioinf.premonition.services.PyProcessor;
+import nl.bioinf.premonition.util.SessionUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import javax.servlet.http.HttpSession;
 
 
 @Controller
