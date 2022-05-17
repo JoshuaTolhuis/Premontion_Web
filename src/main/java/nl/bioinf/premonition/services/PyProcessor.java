@@ -1,10 +1,9 @@
 package nl.bioinf.premonition.services;
 import nl.bioinf.premonition.models.PremonitionForm;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.ui.Model;
-import org.springframework.util.StringUtils;
-import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -27,7 +26,7 @@ public class PyProcessor {
      * runs the python Premonotion script and prints any terminal out lines.
      * No returns. Future arguments are any arguments to be given to Premonition in the form of a string.
      */
-    public String runScript(PremonitionForm form, String userid){
+    public String runScript(PremonitionForm form, String userid, HttpSession session){
         Process process;
         String toReturn = "";
 
@@ -64,13 +63,20 @@ public class PyProcessor {
         try{
             while((line = reader.readLine()) != null) {
                 System.out.println(mProcess.getErrorStream());
+
+                //Set status update in JSON format.
+                session.setAttribute("status_update", "{\"status\":\""+line+"\"}");
+
                 System.out.println(line+"\n");
                 toReturn += line+"\n";
             }
             return toReturn;
         }catch(IOException e){
-            System.out.println("Exception in reading output "+ e);
-            return "Exception in reading output "+ e;
+            String error_message = "Exception in reading output "+ e;
+
+            System.out.println(error_message);
+            session.setAttribute("status_update", "{\"status\":\""+error_message+"\"}");
+            return error_message;
         }
 
     }

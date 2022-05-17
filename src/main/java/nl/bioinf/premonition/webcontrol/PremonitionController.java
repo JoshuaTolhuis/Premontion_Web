@@ -75,7 +75,7 @@ public class PremonitionController {
             e.printStackTrace();
         }
 
-        pyProcessor.runScript(form, userid);
+        pyProcessor.runScript(form, userid, session);
 
         //id
         model.addAttribute("ID", userid);

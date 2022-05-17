@@ -9,8 +9,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.servlet.http.HttpSession;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 class PyProcessorTest {
     @Value("${test.folder.location}")
@@ -23,7 +21,7 @@ class PyProcessorTest {
     void testPython(){
         HttpSession session = null;
         PremonitionForm form = new PremonitionForm();
-        processor.runScript(form, SessionUtil.getUserID(session));
+        processor.runScript(form, SessionUtil.getUserID(session), session);
         System.out.println("JUNIT TEST STARTED: processor test");
     }
 
