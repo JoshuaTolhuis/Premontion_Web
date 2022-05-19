@@ -62,11 +62,11 @@ def main():
     goi_set = read_goi_file(nodes_in_file)
     [ev_con_dict, unique_node_set] = read_evidence_file(ev_file)
 
-    print("Reading files\n")
+    print("Reading files")
     f_goi_set = filter_gois(goi_set, unique_node_set)
     interaction_matrix = create_int_matrix(ev_con_dict, unique_node_set)
 
-    print("Generating network\n")
+    print("Generating network")
     interaction_df = pd.DataFrame(interaction_matrix, columns=unique_node_set, index=unique_node_set)
     limited_inter_df = generate_network(interaction_df, f_goi_set, incl_NRCs)
 
@@ -74,7 +74,7 @@ def main():
     pruned_inter_df = prune_network(limited_inter_df, f_goi_set)
 
     if remove_edges:
-        print("Removing edges\n")
+        print("Removing edges")
         sparse_network_df = make_sparse_network(pruned_inter_df, f_goi_set)
     else:
         sparse_network_df = pruned_inter_df

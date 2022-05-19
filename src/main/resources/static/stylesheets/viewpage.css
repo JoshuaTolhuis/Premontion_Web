@@ -42,3 +42,15 @@ li a:hover {
 img.logo{ width: 50px;
     heigth: 50px;
 }
+
+img.loading_img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 20%;
+    align-content: center;
+}
+
+div.status_text {
+    text-align: center !important;
+}
