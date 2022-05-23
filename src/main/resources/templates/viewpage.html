@@ -24,7 +24,7 @@
 </ul>
 <div id="cy" style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px;"></div>
 
-<div class = "loading">
+<div class = "loading" id="loading">
     <img class="loading_img" id="loading_img" width="50%" height="50%" th:src="@{/images/loading.gif}" alt="Crunching numbers and creating networks."/>
     <div class="status_text" id ="status_text">Initializing</div>
 </div>
@@ -32,12 +32,15 @@
 
     var dataLocation = "[[${location}]]";
     var tempID = "12345" //Temp var delete later.
+    var tempCounter = 0;
     var sessionID = "[[${ID}]]";
-    var fetchedData = null;
+    var fetchedData = {};
     var url = "check_results"
-    var loading_img = document.getElementById('loading_img');
     var status_text = document.getElementById('status_text');
+    var loading_div = document.getElementById('loading');
     var cy_canvas =  document.getElementById('cy');
+    cy_canvas.hidden = true; //Set the cytoscape canvas to hide when page is first loaded.
+    var cycle_cy = true; //cycle cy initialization? Once per new set of data.
 
     var get_data = function (){
         $.ajax({
@@ -54,17 +57,24 @@
         }).then(function(){
             if(Object.keys(fetchedData).length > 1) {
                 //Turn the loading elements off.
-                loading_img.hidden = true;
-                status_text.hidden = true;
+                // loading_img.hidden = true;
+                // status_text.hidden = true;
+                loading_div.hidden = true;
                 cy_canvas.hidden = false; //Show cytoscape canvas
+                if(cycle_cy) {
+                    var cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData});
+                    cycle_cy = false;
+                }
             }
             else{
                 //Turn the loading elements on.
-                loading_img.hidden = false;
-                status_text.hidden = false;
+                // loading_img.hidden = false;
+                // status_text.hidden = false;
+                loading_div.hidden = false;
                 //Change status text
                 status_text.innerHTML = fetchedData.status;
                 cy_canvas.hidden = true; //Hide cytoscape canvas
+                cycle_cy = true;
                 console.log("Put loading screen here")
             }
         });
@@ -73,32 +83,19 @@
     // Retrieve data every 2 seconds and update the results tables
     window.setInterval(function(){
         get_data();
+        tempCounter += 1;
+        if(tempCounter > 3) tempID = "123456";
     }, 2000);
 
-    // var cy = cytoscape({
-    //     container: document.getElementById('cy'),
-    //     elements: [
-    //         { data: { id: 'a' } },
-    //         { data: { id: 'b' } },
-    //         {
-    //             data: {
-    //                 id: 'ab',
-    //                 source: 'a',
-    //                 target: 'b'
-    //             }
-    //         }
-    //     ]
-    // });
-    //
-    // var canvas = document.querySelector('canvas[data-id="layer2-node"]');
-    // var context = canvas.getContext('2d');
-    //
-    // // draw rectangle using general canvas method
-    // function draw() {
-    //     context.fillRect(canvas.width / 2.1, 60, 30, 30);
-    //     requestAnimationFrame(draw);
-    // }
-    // draw();
+    // draw rectangle using general canvas method
+
+    function draw() {
+        var canvas = document.querySelector('canvas[data-id="layer2-node"]');
+        var context = canvas.getContext('2d');
+        context.fillRect(canvas.width / 2.1, 60, 30, 30);
+        requestAnimationFrame(draw);
+    }
+
 </script>
 
 </body>
