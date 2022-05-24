@@ -19,10 +19,10 @@ public class PremonitionErrorController implements ErrorController {
             Integer statusCode = Integer.valueOf(status.toString());
 
             if(statusCode == HttpStatus.NOT_FOUND.value()) {
-                return "error"; //make error 404 message
+                return "error";
             }
             else if(statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
-                return "error"; //make error 500 message
+                return "error";
             }
         }
         return "error";

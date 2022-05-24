@@ -4,11 +4,15 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.1.0/cytoscape.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <link th:href="@{/homepage.css}" rel="stylesheet" />
-    <link href="../static/homepage.css" rel="stylesheet"/>
+    <link th:href="@{/stylesheets/viewpage.css}" rel="stylesheet" />
+    <!-- <link href="../static/stylesheets/viewpage.css" rel="stylesheet"/> -->
 </head>
 <body>
 <ul>
+    <li>
+        <a href = "homepage.html" th:href="@{/home}">
+            <img class="logo" alt="Premonition home" src="../static/images/logo.jpeg" th:src="@{/images/logo.jpeg}">
+        </a>
     <li>
         <a href="homepage.html" th:href="@{/home}">Home</a>
     <li>
@@ -18,74 +22,81 @@
         <a href="aboutus.html" th:href="@{/aboutus}">About Us</a>
     </li>
 </ul>
-<div id="cy" style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px;"></div>
+<div id="cy" style="width: 100%; height: 100%; position: absolute; top: 90px; left: 0px;"></div>
+
+<div class = "loading" id="loading">
+    <img class="loading_img" id="loading_img" width="50%" height="50%" th:src="@{/images/loading.gif}" alt="Crunching numbers and creating networks."/>
+    <div class="status_text" id ="status_text">Initializing</div>
+</div>
 <script>
 
     var dataLocation = "[[${location}]]";
-    var tempID = "123456" //Temp var delete later.
+    var tempID = "12345" //Temp var delete later.
+    var tempCounter = 0; //Temp var delete later.
     var sessionID = "[[${ID}]]";
-    var fetchedData = null;
+    var fetchedData = {};
     var url = "check_results"
+    var status_text = document.getElementById('status_text');
+    var loading_div = document.getElementById('loading');
+    var cy_canvas =  document.getElementById('cy');
+    cy_canvas.hidden = true; //Set the cytoscape canvas to hide when page is first loaded.
+    var cycle_cy = true; //cycle cy initialization? Once per new set of data.
+    var cy = null; //Cytoscape canvas holder.
+
     var get_data = function (){
-        $.when(
-            $.getJSON(url + "?user_id=" + tempID, function (data){
-                console.log(data)
+        $.ajax({
+            url: url + "?user_id=" + tempID,
+            dataType: "json",
+            success: function(data){
                 fetchedData = data;
-                console.log("fetched data " + data);
-
+                // console.log(data);
+                // console.log("fetched data length " + Object.keys(fetchedData).length)
+            },
+            error: function(){
+                console.log("There was an error.");
             }
-        ).then(
-            function(){
-                console.log("Got it! " + fetchedData)
+        }).then(function(){
+            if(Object.keys(fetchedData).length > 1) {
+                //Turn the loading elements off.
+                // loading_img.hidden = true;
+                // status_text.hidden = true;
+                loading_div.hidden = true;
+                cy_canvas.hidden = false; //Show cytoscape canvas
+                if(cycle_cy) {
+                    cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData});
+                    cycle_cy = false;
+                }
             }
-        ));
-
-        console.log(sessionID + " " + dataLocation);
-
-
+            else{
+                //Turn the loading elements on.
+                // loading_img.hidden = false;
+                // status_text.hidden = false;
+                loading_div.hidden = false;
+                //Change status text
+                status_text.innerHTML = fetchedData.status;
+                cy_canvas.hidden = true; //Hide cytoscape canvas
+                cycle_cy = true;
+                console.log("Put loading screen here")
+            }
+        });
     }
 
-    // Retrieve data every 4 seconds and update the results tables
+    // Retrieve data every 2 seconds and update the results tables
     window.setInterval(function(){
         get_data();
-    }, 4000);
+        tempCounter += 1;
+        if(tempCounter > 3) tempID = "123456";
+    }, 2000);
 
-    // function loadFile(filePath) {
-    //     var result = null;
-    //     var xmlhttp = new XMLHttpRequest();
-    //     xmlhttp.open("GET", filePath, false);
-    //     xmlhttp.send();
-    //     if (xmlhttp.status==200) {
-    //         result = xmlhttp.responseText;
-    //     }
-    //     return result;
-    // }
-    // console.log(loadFile(".txt"))
+    // draw rectangle using general canvas method
 
-    // var cy = cytoscape({
-    //     container: document.getElementById('cy'),
-    //     elements: [
-    //         { data: { id: 'a' } },
-    //         { data: { id: 'b' } },
-    //         {
-    //             data: {
-    //                 id: 'ab',
-    //                 source: 'a',
-    //                 target: 'b'
-    //             }
-    //         }
-    //     ]
-    // });
-    //
-    // var canvas = document.querySelector('canvas[data-id="layer2-node"]');
-    // var context = canvas.getContext('2d');
-    //
-    // // draw rectangle using general canvas method
-    // function draw() {
-    //     context.fillRect(canvas.width / 2.1, 60, 30, 30);
-    //     requestAnimationFrame(draw);
-    // }
-    // draw();
+    function draw() {
+        var canvas = document.querySelector('canvas[data-id="layer2-node"]');
+        var context = canvas.getContext('2d');
+        context.fillRect(canvas.width / 2.1, 60, 30, 30);
+        requestAnimationFrame(draw);
+    }
+
 </script>
 
 </body>
