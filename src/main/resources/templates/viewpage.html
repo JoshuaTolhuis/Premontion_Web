@@ -28,6 +28,8 @@
     <img class="loading_img" id="loading_img" width="50%" height="50%" th:src="@{/images/loading.gif}" alt="Crunching numbers and creating networks."/>
     <div class="status_text" id ="status_text">Initializing</div>
 </div>
+<div class="context_menu" id="context_menu" style="width: 150px; height:150px; top: 150px; left: 150px; background-color: deepskyblue">
+</div>
 <script>
 
     var dataLocation = "[[${location}]]";
@@ -38,6 +40,7 @@
     var url = "check_results"
     var status_text = document.getElementById('status_text');
     var loading_div = document.getElementById('loading');
+
     var cy_canvas =  document.getElementById('cy');
     cy_canvas.hidden = true; //Set the cytoscape canvas to hide when page is first loaded.
     var cycle_cy = true; //cycle cy initialization? Once per new set of data.
@@ -65,6 +68,7 @@
                 if(cycle_cy) {
                     cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData});
                     cycle_cy = false;
+                    cyHandler();
                 }
             }
             else{
@@ -76,26 +80,46 @@
                 status_text.innerHTML = fetchedData.status;
                 cy_canvas.hidden = true; //Hide cytoscape canvas
                 cycle_cy = true;
-                console.log("Put loading screen here")
             }
         });
     }
+
+    function cyHandler() {
+        //Cytoscape event handlers
+        cy.on('tap', 'node', function (evt) {
+            var node = evt.target;
+            console.log('tapped ' + node.id());
+
+            var div = document.createElement('div');
+            div.style.backgroundColor = "black";
+            div.style.position = "relative";
+            div.style.left = '150px';
+            div.style.top = '150px';
+            div.style.height = "50px";
+            div.style.width = "50px";
+            document.getElementsByTagName('body')[0].appendChild(div);
+
+        });
+        
+    }
+
+    function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+            x: evt.clientX - rect.left,
+            y: evt.clientY - rect.top
+        };
+    }
+
+
 
     // Retrieve data every 2 seconds and update the results tables
     window.setInterval(function(){
         get_data();
         tempCounter += 1;
-        if(tempCounter > 3) tempID = "123456";
-    }, 2000);
+        if(tempCounter > 2) tempID = "123456";
+    }, 1000);
 
-    // draw rectangle using general canvas method
-
-    function draw() {
-        var canvas = document.querySelector('canvas[data-id="layer2-node"]');
-        var context = canvas.getContext('2d');
-        context.fillRect(canvas.width / 2.1, 60, 30, 30);
-        requestAnimationFrame(draw);
-    }
 
 </script>
 
