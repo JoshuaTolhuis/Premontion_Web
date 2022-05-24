@@ -22,7 +22,7 @@
         <a href="aboutus.html" th:href="@{/aboutus}">About Us</a>
     </li>
 </ul>
-<div id="cy" style="width: 100%; height: 100%; position: absolute; top: 0px; left: 0px;"></div>
+<div id="cy" style="width: 100%; height: 100%; position: absolute; top: 90px; left: 0px;"></div>
 
 <div class = "loading" id="loading">
     <img class="loading_img" id="loading_img" width="50%" height="50%" th:src="@{/images/loading.gif}" alt="Crunching numbers and creating networks."/>
@@ -32,7 +32,7 @@
 
     var dataLocation = "[[${location}]]";
     var tempID = "12345" //Temp var delete later.
-    var tempCounter = 0;
+    var tempCounter = 0; //Temp var delete later.
     var sessionID = "[[${ID}]]";
     var fetchedData = {};
     var url = "check_results"
@@ -41,6 +41,7 @@
     var cy_canvas =  document.getElementById('cy');
     cy_canvas.hidden = true; //Set the cytoscape canvas to hide when page is first loaded.
     var cycle_cy = true; //cycle cy initialization? Once per new set of data.
+    var cy = null; //Cytoscape canvas holder.
 
     var get_data = function (){
         $.ajax({
@@ -62,7 +63,7 @@
                 loading_div.hidden = true;
                 cy_canvas.hidden = false; //Show cytoscape canvas
                 if(cycle_cy) {
-                    var cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData});
+                    cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData});
                     cycle_cy = false;
                 }
             }
