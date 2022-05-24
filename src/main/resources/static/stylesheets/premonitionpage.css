@@ -137,3 +137,6 @@ input[type=button], input[type=submit], input[type=reset] {
     margin: 4px 2px;
     cursor: pointer;
 }
+img.logo{ width: 50px;
+    heigth: 50px;
+}

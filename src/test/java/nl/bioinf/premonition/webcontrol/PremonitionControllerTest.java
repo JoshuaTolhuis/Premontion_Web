@@ -10,37 +10,19 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PremonitionController.class)
 class PremonitionControllerTest {
 
-    private MockMultipartFile file;
-    private MockMultipartFile refFile;
-
-
-    PremonitionControllerTest(MockMultipartFile file, MockMultipartFile refFile) {
-        this.file = file;
-        this.refFile = refFile;
-    }
-
-    @BeforeEach
-    public void initEach() {
-        System.out.println("i have started");
-        MockMultipartFile file = new MockMultipartFile(
-                "file",
-                "hello.txt",
-                MediaType.TEXT_PLAIN_VALUE,
-                "Hello, World!".getBytes()
-        );
-        MockMultipartFile refFile = new MockMultipartFile(
-                "refFile",
-                "hello.txt",
-                MediaType.TEXT_PLAIN_VALUE,
-                "Hello, World!".getBytes()
-        );
-    }
 
     @Autowired
     private MockMvc mockMvc;
@@ -59,6 +41,18 @@ class PremonitionControllerTest {
 
     @Test
     void premonitionShouldStartTest() throws Exception {
+        MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "hello.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello, World!".getBytes()
+        );
+        MockMultipartFile refFile = new MockMultipartFile(
+                "refFile",
+                "hello.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                "Hello, World!".getBytes()
+        );
 
         this.mockMvc.perform(multipart("/premonition")
                 .file(file)
@@ -70,13 +64,16 @@ class PremonitionControllerTest {
     }
 
     @Test
-    public void fileDoesNotExistError() throws Exception{
-        this.mockMvc.perform(multipart("/premonition")
-                        .file(file) // the refFile isn't included so it should give an error
-                        .param("limited", "3")
-                        .param("includeNRCs", "true")
-                        .param("removeEdges", "false"))
-                .andExpect(status().isOk());
+    public void fileDoesNotExistE_thenAssertFileNotFoundError() throws Exception{
+        assertThrows(FileNotFoundException.class, () -> {
+            File file = new File("thisfiledoesntexist");
+            BufferedReader br = new BufferedReader(new FileReader(file));
+        });
+    }
+
+    /*
+    public void createFileTest() throws Exception {
 
     }
+     */
 }
