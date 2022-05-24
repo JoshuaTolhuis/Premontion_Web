@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Objects;
 import javax.servlet.http.HttpSession;
 
 
@@ -39,12 +40,7 @@ public class PremonitionController {
 
     @PostMapping(value = "premonition")
     public String uploadForm(@RequestParam MultipartFile file, @RequestParam MultipartFile refFile,
-                             @RequestParam String includeNRCs,
-                             @RequestParam String removeEdges, @RequestParam String limited,
-                             @RequestParam String test, PremonitionForm form,
-                             HttpSession session, Model model) {
-
-        String userid = SessionUtil.getUserID(session);
+                             HttpSession session, Model model, PremonitionForm form) {
 
         /*
         1. appends model
@@ -54,15 +50,12 @@ public class PremonitionController {
         5. returns viewpage
          */
 
-        form.setFile(file);
-        form.setRefFile(refFile);
-        form.setLimited(limited);
-        form.setTest(test);
-        form.setRemoveEdges(removeEdges);
-        form.setIncludeNRCs(includeNRCs);
+        model.addAttribute("form", form);
+
+        String userid = SessionUtil.getUserID(session);
         
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        String refFileName = StringUtils.cleanPath(refFile.getOriginalFilename());
+        String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
+        String refFileName = StringUtils.cleanPath(Objects.requireNonNull(refFile.getOriginalFilename()));
 
         // save the file on the local file system
         try {
@@ -79,7 +72,6 @@ public class PremonitionController {
 
         //id
         model.addAttribute("ID", userid);
-
 
         return "viewpage";
     }
