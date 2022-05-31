@@ -6,12 +6,13 @@
     <title>Premonition</title>
     <h1 th:text="${greeting}">_greeting_</h1>
     <link th:href="@{/stylesheets/homepage.css}" rel="stylesheet" />
-    <link href="../static/stylesheets/homepage.css" rel="stylesheet"/>
 </head>
 <body>
 <ul>
     <li>
+        <a href = "homepage.html" th:href="@{/home}">
         <img class="logo" alt="Premonition home" src="../static/images/logo.jpeg" th:src="@{/images/logo.jpeg}">
+        </a>
     <li>
         <a href="homepage.html" th:href="@{/home}">Home</a>
     <li>

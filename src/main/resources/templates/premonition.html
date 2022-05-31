@@ -5,18 +5,22 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
   <title>Premonition</title>
     <link th:href="@{/stylesheets/premonitionpage.css}" rel="stylesheet" />
-    <link href="../static/stylesheets/premonitionpage.css" rel="stylesheet"/>
 </head>
 <body>
 <ul>
-  <li>
+    <li>
+    <a href = "homepage.html" th:href="@{/home}">
+        <img class="logo" alt="Premonition home" src="../static/images/logo.jpeg" th:src="@{/images/logo.jpeg}">
+    </a>
+    </li>
+    <li>
     <a href="homepage.html" th:href="@{/home}">Home</a>
-  <li>
+    <li>
     <a href="premonition.html" th:href="@{/premonition}">Premonition</a>
-  </li>
-  <li>
+    </li>
+    <li>
     <a href="aboutus.html" th:href="@{/aboutus}">About Us</a>
-  </li>
+    </li>
 </ul>
 
 <form method="POST" th:action="@{/premonition}" th:object="${form}" enctype="multipart/form-data">

@@ -5,7 +5,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.1.0/cytoscape.min.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link th:href="@{/stylesheets/viewpage.css}" rel="stylesheet" />
-    <!-- <link href="../static/stylesheets/viewpage.css" rel="stylesheet"/> -->
 </head>
 <body>
 <ul>
@@ -21,15 +20,17 @@
     <li>
         <a href="aboutus.html" th:href="@{/aboutus}">About Us</a>
     </li>
+    <li>
+        <form action="#" th:action="@{/viewpage}" method="post">
+            <button class="btn download">Download Cytoscape File</button>
+        </form>
+    </li>
 </ul>
-<div id="cy" style="width: 100%; height: 100%; position: absolute; top: 90px; left: 0px;"></div>
+<div id="cy" style="width: 100%; height: 80%; position: absolute; top: 90px; left: 0px;"></div>
 
 <div class = "loading" id="loading">
     <img class="loading_img" id="loading_img" width="50%" height="50%" th:src="@{/images/loading.gif}" alt="Crunching numbers and creating networks."/>
     <div class="status_text" id ="status_text">Initializing</div>
-</div>
-<div class="context_menu" id="context_menu" style="width: 150px; height:150px; top: 150px; left: 150px; background-color: deepskyblue">
-</div>
 <script>
 
     var dataLocation = "[[${location}]]";
