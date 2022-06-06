@@ -2,6 +2,7 @@
 
 from ast import arg, arguments
 import json
+from platform import node
 #import asyncio.windows_events
 from tokenize import String
 import numpy as np
@@ -39,7 +40,7 @@ def parseArgs():
     parser = argparse.ArgumentParser(description='To setup proteins and reference files.')
     parser.add_argument('-ef', '--evidence_file', type=str, required=True, help="A file containing proteins of interest.")
     parser.add_argument('-rf', '--reference_file',type=str, required=True, help="A file with reference genes for the query.")
-    parser.add_argument('-no', '--node_output', type=str, required=True, help="File to save constructed nodes to.")
+    parser.add_argument('-no', '--node_output', type=str, required=False, help="File to save constructed nodes to.")
     parser.add_argument('-co', '--cyto_output',type=str, required=True, help="File to save cytoscape node graph data to.")
     parser.add_argument('-NRCs', '--include_NRCs', type=bool, required=False, default=True, help="Include NRCs, True or False.")
     parser.add_argument('-re', '--remove_edges', type=bool, required=False, default=True, help="Remove the lowest scoring edges, True or False.")
@@ -74,19 +75,19 @@ def main():
     pruned_inter_df = prune_network(limited_inter_df, f_goi_set)
 
     if remove_edges:
-        print("Removing edges")
+        print("Removing edges, this may take a while")
         sparse_network_df = make_sparse_network(pruned_inter_df, f_goi_set)
     else:
         sparse_network_df = pruned_inter_df
 
     if limited:
-        print("Pruning network limited to {}: round 2/2\n".format(limited))
+        print("Pruning network limited to {}: round 2/2".format(limited))
         sparse_network_df = prune_network_limited(sparse_network_df, f_goi_set, limited)
     else:
         print("Pruning network: round 2/2")
         sparse_network_df = prune_network(sparse_network_df, f_goi_set)
 
-    print("Writing Cytoscape output\n")
+    print("Writing Cytoscape output")
     ##write_cytoscape_output(sparse_network_df, cytoscape_file)
     ##write_cytoscape_node_table(sparse_network_df.columns.values, goi_set, nodes_out_file)
     #write_cytoscape_json_output(sparse_network_df, cytoscape_file)
@@ -251,7 +252,7 @@ def prune_network(int_df, gois):
     int_df = int_df.drop(to_remove, axis=0)
     int_df = int_df.drop(to_remove, axis=1)
 
-    print("Resulting matrix dimensions are: {}\n".format(int_df.shape))
+    print("Resulting matrix dimensions are: {}".format(int_df.shape))
     return int_df
 
 
@@ -393,13 +394,33 @@ def write_json_output(df, out_f):
     :param df: Pandas Dataframe containing the network
     :param out_f: a path-String where the output is stored
     """
-    data_out = []
+    data_out = ""
     entry_id = 1
+    nodes_to_append = []
+    nodes_out = []
+    edges = []
+
+
+    #Checks all genes in query and reference puts every unique entry in an index.
+    for node1 in df.columns.values:
+        if node1 not in nodes_to_append:
+            nodes_to_append.append(node1)
+    for node2 in df.index:
+        if node2 not in nodes_to_append:
+            nodes_to_append.append(node2)
+    for node in nodes_to_append:
+        nodes_out.append({"data": {"id" : node , "label": "node_{}".format(entry_id)}})
+        entry_id += 1
+
+    #create edges section
     for node1 in df.columns.values:
         for node2 in df.index:
             if df[node1][node2] != 0:
-                data_out.append({"entry_{}".format(entry_id): [node1, node2, df[node1][node2]]})
-                entry_id += 1
+                edges.append({"data": {"id": "{}-{}".format(node1, node2), "source": node1, "target": node2, "score": str(df[node1][node2])}})
+
+    
+    #create final JSON
+    data_out += "{nodes:" + str(nodes_out) + ", edges:"+ str(edges)+"}" 
     with open("{}{}".format(out_f, ".json"), 'w') as f:
         json.dump(data_out, f)
     
