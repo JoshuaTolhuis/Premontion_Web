@@ -3,6 +3,7 @@ package nl.bioinf.premonition.webcontrol;
 import nl.bioinf.premonition.models.PremonitionForm;
 import nl.bioinf.premonition.services.PyProcessor;
 import nl.bioinf.premonition.util.SessionUtil;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -62,17 +63,19 @@ public class PremonitionController {
 
         // check if file exists and isn't empty
         try {
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            Path path = Paths.get(UPLOAD_DIR + fileName);
+            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+            Path refPath = Paths.get(UPLOAD_DIR + refFileName);
+            Files.copy(refFile.getInputStream(), refPath, StandardCopyOption.REPLACE_EXISTING);
             // save the file on the local file system
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
             if(!Objects.equals(br.readLine(), "")){
-                Path path = Paths.get(UPLOAD_DIR + fileName);
-                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                Path refPath = Paths.get(UPLOAD_DIR + refFileName);
-                Files.copy(refFile.getInputStream(), refPath, StandardCopyOption.REPLACE_EXISTING);
+                // TODO throw error for file without content
+                //String FileUploadException = new Exception(FileUploadException);;
             }
 
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
+            // TODO Auto-generated catch block and stop process
             e.printStackTrace();
             return "error";
         } catch (IOException e) {

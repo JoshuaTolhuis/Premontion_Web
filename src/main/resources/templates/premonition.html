@@ -25,6 +25,7 @@
 
 <form method="POST" th:action="@{/premonition}" th:object="${form}" enctype="multipart/form-data">
   <tr>
+      <!--Limited has to get a scale from n-1 to n^100 (n being te amount of genes in the file) -->
   <p> Limited<input type="range" min="0" max="5" value="3" class="slider" th:field="*{limited}"></p>
       <p>include NRCs<input type="checkbox" name="includeNRCs" th:checked="*{includeNRCs}"></p>
       <p>Remove Edges<input type="checkbox" name="removeEdges" th:checked="*{removeEdges}"></p>
