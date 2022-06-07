@@ -31,12 +31,7 @@
 <div class = "loading" id="loading">
     <img class="loading_img" id="loading_img" width="50%" height="50%" th:src="@{/images/loading.gif}" alt="Crunching numbers and creating networks."/>
     <div class="status_text" id ="status_text">Initializing</div>
-<<<<<<< HEAD
-</div>
-<!--<div class="context_menu" id="context_menu" style="width: 150px; height:150px; top: 150px; left: 150px; background-color: deepskyblue">-->
-</div>
-=======
->>>>>>> 39319ffc05c18c1a155777665a57ad97071c5000
+
 <script>
 
     var dataLocation = "[[${location}]]";
@@ -53,6 +48,14 @@
     var cycle_cy = true; //cycle cy initialization? Once per new set of data.
     var cy = null; //Cytoscape canvas holder.
     var pushed_updates = []; //Status updates that been pushed to the user.
+
+    var cyto_style = [
+        {
+            'selector': 'node', 'style': {'content': 'data(label)', 'background-color': 'red', 'line-color': 'red'}},
+        {
+            'selector': '.triangle', 'style': {'shape': 'triangle'}}
+        ]
+
 
     var get_data = function (){
         $.ajax({
@@ -74,7 +77,7 @@
                 loading_div.hidden = true;
                 cy_canvas.hidden = false; //Show cytoscape canvas
                 if(cycle_cy) {
-                    cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData});
+                    cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData, style: cyto_style});
                     cycle_cy = false;
                     //cyHandler();
                 }
@@ -128,7 +131,7 @@
 
         //Remove before release
         tempCounter += 1;
-        if(tempCounter > 4) tempID = "1234567";
+        if(tempCounter > 4) tempID = "123456";
     }, 1000);
 
 

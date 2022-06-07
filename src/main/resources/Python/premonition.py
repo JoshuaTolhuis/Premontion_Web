@@ -221,7 +221,7 @@ def reconstruct_int_df(int_df, n_nodes, gois):
     :return: Pandas Pandas Dataframe containing a subset of the initial/ provided Dataframe
     Based on a set of nodes, a new interaction matrix (Dataframe) is constructed
     """
-    print("Reconstructing interacting matrix\n")
+    print("Reconstructing interacting matrix")
     index_dict = {n: i for i, n in enumerate(n_nodes)}
     matrix = np.zeros((len(n_nodes), len(n_nodes)), dtype=int)
     for node1 in n_nodes:
@@ -394,11 +394,11 @@ def write_json_output(df, out_f):
     :param df: Pandas Dataframe containing the network
     :param out_f: a path-String where the output is stored
     """
-    data_out = ""
+    data_out = {}
     entry_id = 1
     nodes_to_append = []
     nodes_out = []
-    edges = []
+    edges_out = []
 
 
     #Checks all genes in query and reference puts every unique entry in an index.
@@ -416,14 +416,20 @@ def write_json_output(df, out_f):
     for node1 in df.columns.values:
         for node2 in df.index:
             if df[node1][node2] != 0:
-                edges.append({"data": {"id": "{}-{}".format(node1, node2), "source": node1, "target": node2, "score": str(df[node1][node2])}})
+                edges_out.append({"data": {"id": "{}-{}".format(node1, node2), "source": node1, "target": node2, "score": str(df[node1][node2])}})
 
     
     #create final JSON
-    data_out += "{nodes:" + str(nodes_out) + ", edges:"+ str(edges)+"}" 
+    data_out["nodes"] = nodes_out 
+    data_out["edges"] = edges_out
     with open("{}{}".format(out_f, ".json"), 'w') as f:
         json.dump(data_out, f)
     
+def sort_score(to_sort):
+    toReturn = ""
+    
+
+
 
 # def write_json_cytoscape_node_table(all_nodes, gois, out_f):
 #     """
@@ -432,7 +438,7 @@ def write_json_output(df, out_f):
 #     data_out = []
 #     entry_id = 1
 #     for node in all_nodes:
-#         if node in gois:
+#         if node in gois: 
 #             data_out.append({"entry_{}".format(entry_id): [node, "NOI"]}) ##Nodes of interest die opgegeven zijn
 #         else:
 #             data_out.append({"entry_{}".format(entry_id): [node, "IGN"]}) ##Intergenetic nodes.
