@@ -395,7 +395,7 @@ def write_json_output(df, out_f):
     :param out_f: a path-String where the output is stored
     """
     data_out = {}
-    entry_id = 1
+    #entry_id = 1
     nodes_to_append = []
     nodes_out = []
     edges_out = []
@@ -409,14 +409,15 @@ def write_json_output(df, out_f):
         if node2 not in nodes_to_append:
             nodes_to_append.append(node2)
     for node in nodes_to_append:
-        nodes_out.append({"data": {"id" : node , "label": "node_{}".format(entry_id)}})
-        entry_id += 1
+        nodes_out.append({"data": {"id" : node , "label": node}})#"node_{}".format(entry_id)}})
+        #entry_id += 1
 
     #create edges section
     for node1 in df.columns.values:
         for node2 in df.index:
             if df[node1][node2] != 0:
-                edges_out.append({"data": {"id": "{}-{}".format(node1, node2), "source": node1, "target": node2, "score": str(df[node1][node2])}})
+                edges_out.append({"data": {"id": "{}-{}".format(node1, node2), "source": node1, "target": node2, "score": str(df[node1][node2])},
+                 "class" : sort_score(df[node1][node2])})
 
     
     #create final JSON
@@ -426,7 +427,16 @@ def write_json_output(df, out_f):
         json.dump(data_out, f)
     
 def sort_score(to_sort):
-    toReturn = ""
+    to_sort_div = (to_sort / 100)
+    to_sort_div = round(to_sort_div)
+    return "cat_{}".format(int(to_sort_div / 0.5))
+    #Numbers should be between 0 and 999. By dividing by 10, we can create 20 groups that steps in 5
+    # small_number = to_sort / 10
+    # for i in range(0, 100, 5):
+    #     if small_number <= i:
+    #         return "cat_{}".format(int(i/5))
+
+    
     
 
 

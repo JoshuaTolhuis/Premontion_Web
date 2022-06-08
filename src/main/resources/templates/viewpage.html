@@ -33,7 +33,6 @@
     <div class="status_text" id ="status_text">Initializing</div>
 
 <script>
-
     var dataLocation = "[[${location}]]";
     var tempID = "12345" //Temp var delete later.
     var tempCounter = 0; //Temp var delete later.
@@ -51,11 +50,97 @@
 
     var cyto_style = [
         {
-            'selector': 'node', 'style': {'content': 'data(label)', 'background-color': 'red', 'line-color': 'red'}},
+            'selector': 'node', 'style': {'content': 'data(label)'}},
         {
-            'selector': '.triangle', 'style': {'shape': 'triangle'}}
+            'selector': 'cat_1', 'style': {'line-color': 'MediumBlue', 'background-color': 'MediumBlue'}
+        },
+        {
+            'selector': 'cat_2', 'style': {'line-color': 'RoyalBlue', 'background-color': 'RoyalBlue'}
+        },
+        {
+            'selector': 'cat_3', 'style': {'line-color': 'DeepSkyBlue', 'background-color': 'DeepSkyBlue'}
+        },
+        {
+            'selector': 'cat_4', 'style': {'line-color': 'LightSkyBlue', 'background-color': 'LightSkyBlue'}
+        },
+        {
+            'selector': 'cat_5', 'style': {'line-color': 'Green', 'background-color': 'Green'}
+        },
+        {
+            'selector': 'cat_6', 'style': {'line-color': 'OliveDrab', 'background-color': 'OliveDrab'}
+        },
+        {
+            'selector': 'cat_7', 'style': {'line-color': 'LimeGreen', 'background-color': 'LimeGreen'}
+        },
+        {
+            'selector': 'cat_8', 'style': {'line-color': 'LawnGreen', 'background-color': 'LawnGreen'}
+        },
+        {
+            'selector': 'cat_9', 'style': {'line-color': 'DarkKhaki', 'background-color': 'DarkKhaki'}
+        },
+        {
+            'selector': 'cat_10', 'style': {'line-color': 'Gold', 'background-color': 'Gold'}
+        },
+        {
+            'selector': 'cat_11', 'style': {'line-color': 'Yellow', 'background-color': 'Yellow'}
+        },
+        {
+            'selector': 'cat_12', 'style': {'line-color': 'LightGoldenrodYellow', 'background-color': 'LightGoldenrodYellow'}
+        },
+        {
+            'selector': 'cat_13', 'style': {'line-color': 'OrangeRed', 'background-color': 'OrangeRed'}
+        },
+        {
+            'selector': 'cat_14', 'style': {'line-color': 'Tomato', 'background-color': 'Tomato'}
+        },
+        {
+            'selector': 'cat_15', 'style': {'line-color': 'DarkOrange', 'background-color': 'DarkOrange'}
+        },
+        {
+            'selector': 'cat_16', 'style': {'line-color': 'Orange', 'background-color': 'Orange'}
+        },
+        {
+            'selector': 'cat_17', 'style': {'line-color': 'Red', 'background-color': 'Red'}
+        },
+        {
+            'selector': 'cat_18', 'style': {'line-color': 'Crimson', 'background-color': 'Crimson'}
+        },
+        {
+            'selector': 'cat_19', 'style': {'line-color': 'LightCoral', 'background-color': 'LightCoral'}
+        },
+        {
+            'selector': 'cat_20', 'style': {'line-color': 'DarkMagenta', 'background-color': 'DarkMagenta'}
+        },
         ]
-
+    let conc_layout = {
+        name: 'concentric',
+        fit: true, // whether to fit the viewport to the graph
+        padding: 40, // the padding on fit
+        startAngle: 3 / 2 * Math.PI, // where nodes start in radians
+        sweep: undefined, // how many radians should be between the first and last node (defaults to full circle)
+        clockwise: true, // whether the layout should go clockwise (true) or counterclockwise/anticlockwise (false)
+        equidistant: false, // whether levels have an equal radial distance betwen them, may cause bounding box overflow
+        minNodeSpacing: 10, // min spacing between outside of nodes (used for radius adjustment)
+        boundingBox: undefined, // constrain layout bounds; { x1, y1, x2, y2 } or { x1, y1, w, h }
+        avoidOverlap: true, // prevents node overlap, may overflow boundingBox if not enough space
+        nodeDimensionsIncludeLabels: true, // Excludes the label when calculating node bounding boxes for the layout algorithm
+        height: undefined, // height of layout area (overrides container height)
+        width: undefined, // width of layout area (overrides container width)
+        spacingFactor: undefined, // Applies a multiplicative factor (>0) to expand or compress the overall area that the nodes take up
+        concentric: function( node ){ // returns numeric value for each node, placing higher nodes in levels towards the centre
+            return node.degree();
+        },
+        levelWidth: function( nodes ){ // the variation of concentric values in each level
+            return nodes.maxDegree() / 4;
+        },
+        animate: false, // whether to transition the node positions
+        animationDuration: 500, // duration of animation in ms if enabled
+        animationEasing: undefined, // easing of animation if enabled
+        animateFilter: function ( node, i ){ return true; }, // a function that determines whether the node should be animated.  All nodes animated by default on animate enabled.  Non-animated nodes are positioned immediately when the layout starts
+        ready: undefined, // callback on layoutready
+        stop: undefined, // callback on layoutstop
+        transform: function (node, position ){ return position; } // transform a given node position. Useful for changing flow direction in discrete layouts
+    };
 
     var get_data = function (){
         $.ajax({
@@ -77,9 +162,8 @@
                 loading_div.hidden = true;
                 cy_canvas.hidden = false; //Show cytoscape canvas
                 if(cycle_cy) {
-                    cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData, style: cyto_style});
+                    cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData, layout : conc_layout, })//, style: cyto_style});
                     cycle_cy = false;
-                    //cyHandler();
                 }
             }
             else{
@@ -98,31 +182,11 @@
         });
     }
 
-    function cyHandler() {
-        //Cytoscape event handlers
-        cy.on('tap', 'node', function (evt) {
+    if(cy != null) {
+        cy.on('tap', 'node', function(evt){
             var node = evt.target;
-            console.log('tapped ' + node.id());
-
-            var div = document.createElement('div');
-            div.style.backgroundColor = "black";
-            div.style.position = "relative";
-            div.style.left = '150px';
-            div.style.top = '150px';
-            div.style.height = "50px";
-            div.style.width = "50px";
-            document.getElementsByTagName('body')[0].appendChild(div);
-
+            console.log( 'tapped ' + node.id() );
         });
-
-    }
-
-    function getMousePos(canvas, evt) {
-        var rect = canvas.getBoundingClientRect();
-        return {
-            x: evt.clientX - rect.left,
-            y: evt.clientY - rect.top
-        };
     }
 
     // Retrieve data every 2 seconds and update the results tables
