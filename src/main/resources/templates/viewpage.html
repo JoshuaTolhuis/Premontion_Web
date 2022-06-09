@@ -31,8 +31,8 @@
 <div class = "loading" id="loading">
     <img class="loading_img" id="loading_img" width="50%" height="50%" th:src="@{/images/loading.gif}" alt="Crunching numbers and creating networks."/>
     <div class="status_text" id ="status_text">Initializing</div>
-
 <script>
+
     var dataLocation = "[[${location}]]";
     var tempID = "12345" //Temp var delete later.
     var tempCounter = 0; //Temp var delete later.
@@ -41,9 +41,12 @@
     var url = "check_results"
     var status_text = document.getElementById('status_text');
     var loading_div = document.getElementById('loading');
+    var download_but = document.getElementById('btn download')
 
     var cy_canvas =  document.getElementById('cy');
     cy_canvas.hidden = true; //Set the cytoscape canvas to hide when page is first loaded.
+    download_but.hidden = true;
+
     var cycle_cy = true; //cycle cy initialization? Once per new set of data.
     var cy = null; //Cytoscape canvas holder.
 
@@ -168,6 +171,7 @@
                 // loading_img.hidden = true;
                 // status_text.hidden = true;
                 loading_div.hidden = true;
+                download_but.hidden = false;
                 cy_canvas.hidden = false; //Show cytoscape canvas
                 if(cycle_cy) {
                     cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData, layout : conc_layout, style: cyto_style});
@@ -176,7 +180,11 @@
             }
             else{
                 //Turn the loading elements on.
+                // loading_img.hidden = false;
+                // status_text.hidden = false;
                 loading_div.hidden = false;
+                download_but.hidden = true;
+                //Change status text
                 //Change status text (old code, will only update once every call.)
                 // if(!pushed_updates.includes(fetchedData.status)){
                 //     status_text.innerHTML += "<br>" + fetchedData.status
@@ -194,7 +202,18 @@
             var node = evt.target;
             console.log( 'tapped ' + node.id() );
         });
+
     }
+
+    function getMousePos(canvas, evt) {
+        var rect = canvas.getBoundingClientRect();
+        return {
+            x: evt.clientX - rect.left,
+            y: evt.clientY - rect.top
+        };
+    }
+
+
 
     // Retrieve data every 2 seconds and update the results tables
     window.setInterval(function(){
