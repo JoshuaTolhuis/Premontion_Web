@@ -417,7 +417,7 @@ def write_json_output(df, out_f):
         for node2 in df.index:
             if df[node1][node2] != 0:
                 edges_out.append({"data": {"id": "{}-{}".format(node1, node2), "source": node1, "target": node2, "score": str(df[node1][node2])},
-                 "class" : sort_score(df[node1][node2])})
+                 "classes" : sort_score(df[node1][node2])})
 
     
     #create final JSON
@@ -426,36 +426,14 @@ def write_json_output(df, out_f):
     with open("{}{}".format(out_f, ".json"), 'w') as f:
         json.dump(data_out, f)
     
+    
 def sort_score(to_sort):
-    to_sort_div = (to_sort / 100)
-    to_sort_div = round(to_sort_div)
-    return "cat_{}".format(int(to_sort_div / 0.5))
     #Numbers should be between 0 and 999. By dividing by 10, we can create 20 groups that steps in 5
-    # small_number = to_sort / 10
-    # for i in range(0, 100, 5):
-    #     if small_number <= i:
-    #         return "cat_{}".format(int(i/5))
-
-    
-    
-
-
-
-# def write_json_cytoscape_node_table(all_nodes, gois, out_f):
-#     """
-#     creates and saves a nodes out json file for cytoscape.
-#     """
-#     data_out = []
-#     entry_id = 1
-#     for node in all_nodes:
-#         if node in gois: 
-#             data_out.append({"entry_{}".format(entry_id): [node, "NOI"]}) ##Nodes of interest die opgegeven zijn
-#         else:
-#             data_out.append({"entry_{}".format(entry_id): [node, "IGN"]}) ##Intergenetic nodes.
-#         entry_id += 1
-#     with open("{}{}".format(out_f, ".json"), 'w') as f:
-#         json.dump(data_out, f)
+    to_sort_div = round(to_sort / 10)
+    to_sort_div = round(to_sort_div / 5)
+    return "cat_{}".format(int(to_sort_div))
    
+
 def write(data, file):
     with open(file, 'w') as FILE_H:
         FILE_H.write(data)

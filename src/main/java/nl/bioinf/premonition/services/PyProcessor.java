@@ -60,12 +60,16 @@ public class PyProcessor {
         InputStream stdout = mProcess.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(stdout,StandardCharsets.UTF_8));
         String line;
+        String allupdates = "";
         try{
             while((line = reader.readLine()) != null) {
                 System.out.println(mProcess.getErrorStream());
+                if(!allupdates.contains(line)) {
+                    allupdates += line + "\n";
+                }
 
                 //Set status update in JSON format.
-                session.setAttribute("status_update", "{\"status\":\""+line+"\"}");
+                session.setAttribute("status_update", "{\"status\":\""+allupdates+"\"}");
 
                 System.out.println(line+"\n");
                 toReturn += line+"\n";
