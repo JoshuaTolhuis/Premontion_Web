@@ -23,7 +23,9 @@ public class DownloadController {
     public ResponseEntity<InputStreamResource> download(HttpSession session) throws IOException {
         String userid = SessionUtil.getUserID(session);
 
+        // TODO change this to the real code once implemented fully
         // File downloadableFile = new File(filelocation+userid+".json");
+
         File downloadableFile = new File(filelocation+"123456"+".json");
         HttpHeaders headers = new HttpHeaders();
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
