@@ -9,7 +9,9 @@
 <body>
 <ul>
     <li>
-        <img alt="logo" src="../static/images/logo.jpeg" th:src="@{/images/logo.jpeg}">
+        <a href = "homepage.html" th:href="@{/home}">
+            <img class="logo" alt="Premonition home" src="../static/images/logo.jpeg" th:src="@{/images/logo.jpeg}">
+        </a>
     <li>
         <a href="homepage.html" th:href="@{/home}">Home</a>
     <li>
@@ -19,5 +21,10 @@
         <a href="aboutus.html" th:href="@{/aboutus}">About Us</a>
     </li>
 </ul>
+<p1 th:text="${ID}">_ID_</p1>
 </body>
+<p>
+    Welcome to premonition,
+    Premonition is a web page build to be cool
+</p>
 </html>
