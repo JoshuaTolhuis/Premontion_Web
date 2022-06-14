@@ -31,17 +31,17 @@
     <li>
         <a href="aboutus.html" th:href="@{/aboutus}">About Us</a>
     </li>
-    <li id = "btn download">
+    <li id = "btn_download">
         <form action="#" th:action="@{/viewpage}" method="post">
-            <button class="btn download">Download Cytoscape File</button>
+            <button class="btn_download">Download Cytoscape File</button>
         </form>
     </li>
-    <li>
-        <form id="form" role="search">
-        <input type="search" id="query" name="q"
+    <li id="btn search">
+        <form role="search">
+            <input type="search" id="qry search"
                placeholder="Search..."
                aria-label="Search through site content">
-        <button>Search</button>
+            <button class = "btn search">Search</button>
         </form>
     </li>
 </ul>
@@ -53,6 +53,8 @@
 </div>
 <script>
 
+    clicked = false
+
     var dataLocation = "[[${location}]]";
     var tempID = "12345" //Temp var delete later.
     var tempCounter = 0; //Temp var delete later.
@@ -61,11 +63,14 @@
     var url = "check_results"
     var status_text = document.getElementById('status_text');
     var loading_div = document.getElementById('loading');
-    var download_but = document.getElementById('btn download')
-
+    var download_but = document.getElementById('btn_download');
+    var search_form = document.getElementById('btn search');
+    var search_query = document.getElementById('qry search')
     var cy_canvas =  document.getElementById('cy');
     cy_canvas.hidden = true; //Set the cytoscape canvas to hide when page is first loaded.
     download_but.hidden = true;
+    search_form.hidden = true;
+    search_query.hidden = true;
 
 
     var cy = null // holds canvas
@@ -187,40 +192,59 @@
             error: function(){
                 console.log("There was an error.");
             }
-        }).then(function(){
-            if(Object.keys(fetchedData).length > 1) {
-                //Turn the loading elements off.
-                // loading_img.hidden = true;
-                // status_text.hidden = true;
-                loading_div.hidden = true;
-                download_but.hidden = false;
-                cy_canvas.hidden = false; //Show cytoscape canvas
-                if(cycle_cy) {
-                    cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData, layout : conc_layout, style: cyto_style});
-                    cycle_cy = false;
-                    cy.on('click', 'node', function(event) {
+        }).then(
+            function(){
+                if(Object.keys(fetchedData).length > 1) {
+                    //Turn the loading elements off.
+                    // loading_img.hidden = true;
+                    // status_text.hidden = true;
+                    loading_div.hidden = true;
+                    download_but.hidden = false;
+                    search_form.hidden = false;
+                    search_query.hidden = false;
+                    cy_canvas.hidden = false; //Show cytoscape canvas
+                    if(cycle_cy) {
+                        cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData, layout : conc_layout, style: cyto_style});
+                        cycle_cy = false;
+                        // script for clickable node
+                        cy.on('click', 'node', function(event) {
+                            // get node a
+                            let node_a = event.target;
 
-                        // get node
-                        let node_a = event.target;
-                        // get edges to -> b and c
-                        let connected_edges = node_a.connectedEdges()
+                            // get edges to -> b and c
+                            let connected_edges = node_a.connectedEdges()
 
-                        // get source and target nodes -> a, b and c
-                        let connected_nodes = connected_edges.connectedNodes()
+                            // get source and target nodes -> a, b and c
+                            let connected_nodes = connected_edges.connectedNodes()
 
-                        // Then you can remove the unwanted nodes
-                        // If you want, you can save removed_nodes to local storage and add them to the grap at a later point
-                        cy.remove(cy.nodes().not(connected_nodes))
-                        cy.layout(conc_layout).run()
-                    })
+                            // Then you can remove the unwanted nodes
+                            // If you want, you can save removed_nodes to local storage and add them to the grap at a later point
+                            if(clicked == false) {
+                                removed_nodes = cy.remove(cy.nodes().not(connected_nodes.union(connected_edges)))
+                                clicked = true
+                                cy.run()
+                            }
+                            // You can run the layout directly on the new graph
+
+                        })
+                        cy.on('tap', function(event){
+                                if(clicked == true) {
+                                    removed_nodes.restore()
+                                    clicked = false
+                                }
+                                cy.run()
+                            }
+                        )
+                    }
                 }
-            }
             else{
                 //Turn the loading elements on.
                 // loading_img.hidden = false;
                 // status_text.hidden = false;
                 loading_div.hidden = false;
                 download_but.hidden = true;
+                search_form.hidden = true;
+                search_query.hidden = true;
                 //Change status text
                 //Change status text (old code, will only update once every call.)
                 // if(!pushed_updates.includes(fetchedData.status)){
@@ -234,17 +258,6 @@
         });
     }
 
-
-    // function getMousePos(canvas, evt) {
-    //     var rect = canvas.getBoundingClientRect();
-    //     return {
-    //         x: evt.clientX - rect.left,
-    //         y: evt.clientY - rect.top
-    //     };
-    // }
-
-
-
     // Retrieve data every 2 seconds and update the results tables
     window.setInterval(function(){
         get_data();
@@ -255,27 +268,9 @@
     }, 1000);
 
     // script for the search bar
-    const f = document.getElementById('form');
-    const q = document.getElementById('query');
-
-
-    // script for clickable node
-        cy.on('click', 'node', function(event) {
-
-            // get node
-            let node_a = event.target;
-            // get edges to -> b and c
-            let connected_edges = node_a.connectedEdges()
-
-            // get source and target nodes -> a, b and c
-            let connected_nodes = connected_edges.connectedNodes()
-
-            // Then you can remove the unwanted nodes
-            // If you want, you can save removed_nodes to local storage and add them to the grap at a later point
-            cy.remove(cy.nodes().not(connected_nodes))
-            cy.run()
-        })
-
+    // const f = document.getElementById('form');
+    // const q = document.getElementById('query');
+    //
     // function submitted(event) {
     //     event.preventDefault();
     // }

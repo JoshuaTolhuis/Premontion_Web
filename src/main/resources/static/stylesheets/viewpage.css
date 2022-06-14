@@ -55,20 +55,18 @@ img.loading_img{
 div.status_text {
     text-align: center !important;
 }
-.btn {
+.btn_download{
     border: darkgray;
     background-color: green;
     padding: 14px 28px;
     font-size: 16px;
     cursor: pointer;
     display: block;
-
+    color: white;
 }
 
 /* On mouse-over */
-.btn:hover {background: darkgreen;}
-
-.download {color: white;}
+.btn_download:hover {background: darkgreen;}
 
 /* Style the search box inside the navigation bar */
 input[type=text] {
