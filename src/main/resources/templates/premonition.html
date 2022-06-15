@@ -26,9 +26,9 @@
 <form method="POST" th:action="@{/premonition}" th:object="${form}" enctype="multipart/form-data">
   <tr>
       <!--Limited has to get a scale from n-1 to n^100 (n being te amount of genes in the file) -->
-  <p> Limited<input type="range" min="0" max="5" value="3" class="slider" th:field="*{limited}"></p>
-      <p>include NRCs<input type="checkbox" name="includeNRCs" th:checked="*{includeNRCs}"></p>
-      <p>Remove Edges<input type="checkbox" name="removeEdges" th:checked="*{removeEdges}"></p>
+  <p> Limited; Limited is the lowest value of edges allowed in the graph (0 means all edges allowed)<input type="range" min="0" max="500" value="3" class="slider" th:field="*{limited}"></p>
+      <p>include NRCs<input type="checkbox" name="includeNRCs" th:checked="*{includeNRCs}">(NRC stands for Non Reactant Cells)</p>
+      <p>Remove Edges<input type="checkbox" name="removeEdges" th:checked="*{removeEdges}">(removing the edges will only show the nodes)</p>
       <p>Select a genefile to upload<input type="file" name="file"  th:field="*{file}" /></p>
       <p>Select a gene reference file to upload<input type="file" name="refFile" th:field="*{refFile}"/></p>
       <p><input type="submit" value="Submit" /></p>

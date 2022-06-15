@@ -4,14 +4,7 @@
     <!-- cytoscape -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.1.0/cytoscape.min.js"></script>
-
-    <!-- cyposcape dagre -->
-    <script src="https://unpkg.com/dagre@0.7.4/dist/dagre.js"></script>
-    <script src="https://cdn.rawgit.com/cytoscape/cytoscape.js-dagre/1.5.0/cytoscape-dagre.js"></script>
-
-    <!-- cytoscape popper -->
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.5/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/cytoscape-popper@1.0.2/cytoscape-popper.min.js"></script>
+    <script src='jquery.cytoscape.js-toolbar.js'></script>
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link th:href="@{/stylesheets/viewpage.css}" rel="stylesheet" type="text/css"/>
@@ -36,13 +29,13 @@
             <button class="btn_download">Download Cytoscape File</button>
         </form>
     </li>
-    <li id="btn search">
-        <form role="search">
+    <li>
+        <form th:action="@{/nodesearcher}" method="post">
             <input type="search" id="qry search"
-               placeholder="Search..."
-               aria-label="Search through site content">
-            <button class = "btn search">Search</button>
-        </form>
+                   placeholder="Search..."
+                   aria-label="Search through site content"/>
+            <button id="btn search" class = "btn search" type="submit">Search</button>
+       </form>
     </li>
 </ul>
 <div id="cy" style="width: 100%; height: 80%; position: absolute; top: 90px; left: 0px;"></div>
@@ -76,79 +69,6 @@
     var cy = null // holds canvas
     var cycle_cy = true; //cycle cy initialization? Once per new set of data.
 
-    var cyto_style = [
-        {
-            'selector': 'node', 'style': {'content': 'data(label)', 'background-color': 'BlueViolet'}
-        },
-        {
-            'selector': 'edge', 'style': {'label': 'data(score)'}
-        },
-        {
-            'selector': ':selected',
-            'style': {
-                'background-color': 'SteelBlue', 'line-color': 'black', 'target-arrow-color': 'black', 'source-arrow-color': 'black'}
-        },
-        {
-            'selector': '.cat_1', 'style': {'line-color': 'MediumBlue'}
-        },
-        {
-            'selector': '.cat_2', 'style': {'line-color': 'RoyalBlue'}
-        },
-        {
-            'selector': '.cat_3', 'style': {'line-color': 'DeepSkyBlue'}
-        },
-        {
-            'selector': '.cat_4', 'style': {'line-color': 'LightSkyBlue'}
-        },
-        {
-            'selector': '.cat_5', 'style': {'line-color': 'Green'}
-        },
-        {
-            'selector': '.cat_6', 'style': {'line-color': 'OliveDrab'}
-        },
-        {
-            'selector': '.cat_7', 'style': {'line-color': 'LimeGreen'}
-        },
-        {
-            'selector': '.cat_8', 'style': {'line-color': 'LawnGreen'}
-        },
-        {
-            'selector': '.cat_9', 'style': {'line-color': 'DarkKhaki'}
-        },
-        {
-            'selector': '.cat_10', 'style': {'line-color': 'Gold'}
-        },
-        {
-            'selector': '.cat_11', 'style': {'line-color': 'Yellow'}
-        },
-        {
-            'selector': '.cat_12', 'style': {'line-color': 'LightGoldenrodYellow'}
-        },
-        {
-            'selector': '.cat_13', 'style': {'line-color': 'OrangeRed'}
-        },
-        {
-            'selector': '.cat_14', 'style': {'line-color': 'Tomato'}
-        },
-        {
-            'selector': '.cat_15', 'style': {'line-color': 'DarkOrange'}
-        },
-        {
-            'selector': '.cat_16', 'style': {'line-color': 'Orange'}
-        },
-        {
-            'selector': '.cat_17', 'style': {'line-color': 'Red'}
-        },
-        {
-            'selector': '.cat_18', 'style': {'line-color': 'Crimson'}
-        },
-        {
-            'selector': '.cat_19', 'style': {'line-color': 'LightCoral'}
-        },
-        {
-            'selector': '.cat_20', 'style': {'line-color': 'DarkMagenta'}
-        },
-        ]
 
     let conc_layout = {
         name: 'concentric',
@@ -360,13 +280,21 @@
     }, 1000);
 
     // script for the search bar
-    // const f = document.getElementById('form');
-    // const q = document.getElementById('query');
-    //
-    // function submitted(event) {
-    //     event.preventDefault();
-    // }
-    // f.addEventListener('submit', submitted);
+    // search_form
+    // search_query
+    function submitted(event) {
+        let filter = search_query.toUpperCase()
+        for (i = 0; i < li.length; i++){
+            let nodeList = cy.nodes();
+            cy.filter(filter)
+            cy.run()
+        }
+
+
+        cy.$(`[id] = ${filter}`)
+    }
+    search_form.addEventListener('submit', submitted);
+
 
 </script>
 

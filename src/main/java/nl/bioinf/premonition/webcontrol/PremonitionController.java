@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,8 +44,11 @@ public class PremonitionController {
     }
 
     @PostMapping(value = "premonition")
-    public String uploadForm(@RequestParam MultipartFile file, @RequestParam MultipartFile refFile,
-                             HttpSession session, Model model, PremonitionForm form) {
+    public String uploadForm(@ModelAttribute MultipartFile file, @ModelAttribute MultipartFile refFile,
+                             @ModelAttribute PremonitionForm form,
+                             @RequestParam Boolean removeEdges, @RequestParam Boolean includeNRCs,
+                             @RequestParam String limited,
+                             HttpSession session, Model model) throws IOException {
 
         /*
         1. appends model
@@ -54,38 +58,51 @@ public class PremonitionController {
         5. returns viewpage
          */
 
-        model.addAttribute("form", form);
-
         String userid = SessionUtil.getUserID(session);
-        
+
+//        model.addAttribute("file", file);
+//        model.addAttribute("refFile",refFile);
+//        model.addAttribute("removeEdges",removeEdges);
+//        model.addAttribute("includeNRCs", includeNRCs);
+//        model.addAttribute("limited", limited);
+
+        form.setFile(file);
+        form.setRefFile(refFile);
+        form.setRemoveEdges(removeEdges);
+        form.setIncludeNRCs(includeNRCs);
+        form.setLimited(limited);
+
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));
         String refFileName = StringUtils.cleanPath(Objects.requireNonNull(refFile.getOriginalFilename()));
 
         // check if file exists and isn't empty
-        try {
-            Path path = Paths.get(UPLOAD_DIR + fileName);
-            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-            Path refPath = Paths.get(UPLOAD_DIR + refFileName);
-            Files.copy(refFile.getInputStream(), refPath, StandardCopyOption.REPLACE_EXISTING);
-            // save the file on the local file system
-            BufferedReader br = new BufferedReader(new FileReader(fileName));
-            if(!Objects.equals(br.readLine(), "")){
-                // TODO throw error for file without content
-                //String FileUploadException = new Exception(FileUploadException);;
-            }
+        Path path = Paths.get(UPLOAD_DIR + fileName);
+        Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        Path refPath = Paths.get(UPLOAD_DIR + refFileName);
+        Files.copy(refFile.getInputStream(), refPath, StandardCopyOption.REPLACE_EXISTING);
 
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block and stop process
-            e.printStackTrace();
-            return "error";
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        TODO change to validition via BindingResult
+//        try {
+//            Path path = Paths.get(UPLOAD_DIR + fileName);
+//            Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+//            Path refPath = Paths.get(UPLOAD_DIR + refFileName);
+//            Files.copy(refFile.getInputStream(), refPath, StandardCopyOption.REPLACE_EXISTING);
+//            // save the file on the local file system
+//            BufferedReader br = new BufferedReader(new FileReader(fileName));
+//            if(!Objects.equals(br.readLine(), "")){
+//                //String FileUploadException = new Exception(FileUploadException);;
+//            }
+//
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//            return "error";
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         pyProcessor.runScript(form, userid, session);
 
-        //id
-        model.addAttribute("ID", userid);
+
 
         return "viewpage";
     }

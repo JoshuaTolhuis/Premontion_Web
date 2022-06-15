@@ -21,10 +21,25 @@
         <a href="aboutus.html" th:href="@{/aboutus}">About Us</a>
     </li>
 </ul>
-<p1 th:text="${ID}">_ID_</p1>
+
 </body>
 <p>
-    Welcome to premonition,
-    Premonition is a web page build to be cool
+    Gene expression experiments do not always give a complete connected protein-to-protein interaction network.<br>
+    Therefore Dr. J. Bosman Et al.  developed Premonition. Premonition takes a set of candidate genes from I.E.<br>
+    RNA-sequencing, and constructs a as probable as possible protein-to-protein interaction network.<br>
+    It does this by adding genes from which is known they interact with the candidate genes.<br>
+    Next the program will remove as much uninformative genes as possible, so a scarce network remains.<br>
+    The constructed network is now enriched with biological relevant genes and a Gene Ontology (GO) analysis which shows strong enrichment of biological processes.<br>
+    <br>
+    <br>
+    Premonition produces an interactive 2D protein-to-protein network based on known information about a specific system or organism. This network is downloadable and is usable with Cytoscape powered systems.
+    <br>
+    <br>
+    Authors:
+    Premonition: J.Bosman, Z. Eelderink-Chen, E.Laing, M. Merrow.
+    <br>
+    <br>
+    Premonition-web: J. Tolhuis, N. Mooldijk.<br>
+    Mail: J.O.Tolhuis@st.hanze.nl, N.Mooldijk@st.hanze.nl
 </p>
 </html>

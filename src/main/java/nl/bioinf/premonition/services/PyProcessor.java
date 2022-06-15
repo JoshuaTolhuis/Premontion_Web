@@ -1,11 +1,16 @@
 package nl.bioinf.premonition.services;
 import nl.bioinf.premonition.models.PremonitionForm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 /*
 Author: Nils Mooldijk
@@ -15,6 +20,8 @@ Author: Nils Mooldijk
 public class PyProcessor {
     private Process mProcess;
 
+    @Value("${data.folder.location}")
+    String UPLOAD_DIR;
     @Value("${data.folder.location}")
     private String genePath;
     @Value("${python.folder.location}")
@@ -36,19 +43,32 @@ public class PyProcessor {
         try{
             String premonitionScript = "premonition.py";
 
+//            String scriptToExecute = String.format("%1$s -ef %2$s -rf %3$s -no %4$s -co %4$s" + "_COut_" + " -NRCs %5$s -re %6$s",
+//                    premonitionScript, model.getAttribute("file"), model.getAttribute("refFile"),
+//                    userid, model.getAttribute("includeNRCs"), model.getAttribute("removeEdges"));
+
+            String file = StringUtils.cleanPath(Objects.requireNonNull(form.getFile().getOriginalFilename()));
+            String refFile = StringUtils.cleanPath(Objects.requireNonNull(form.getRefFile().getOriginalFilename()));
+
             String scriptToExecute = String.format("%1$s -ef %2$s -rf %3$s -no %4$s -co %4$s" + "_COut_" + " -NRCs %5$s -re %6$s",
-                    premonitionScript, form.getFile(), form.getRefFile(),
-                    userid, form.getIncludeNRCs(), form.getRemoveEdges());
+                    premonitionScript,
+                    Paths.get(UPLOAD_DIR + file),
+                    Paths.get(UPLOAD_DIR + refFile),
+                    userid,
+                    form.getIncludeNRCs(),
+                    form.getRemoveEdges());
 
-            //TODO Remove below test variables
-            String testExecute = String.format("%1$s -ef %2$s -rf %3$s -no %4$s -co %4$s" + "_COut_" + " -NRCs %5$s -re %6$s",
-                    premonitionScript, testDataLocation + "genes.txt", testDataLocation + "links.tsv",
-                    "JsonOut/"+userid, true, true); //Temp var
-            String testScript = "test.py -ef hey -rf hoi -no output -co output_cyto"; //temp var
-            //TODO Remove above test variables
+            System.out.println(form.getFile().getOriginalFilename());
+            System.out.println(scriptToExecute);
+//            //TODO Remove below test variables
+//            String testExecute = String.format("%1$s -ef %2$s -rf %3$s -no %4$s -co %4$s" + "_COut_" + " -NRCs %5$s -re %6$s",
+//                    premonitionScript, testDataLocation + "genes.txt", testDataLocation + "links.tsv",
+//                    "JsonOut/"+userid, true, true); //Temp var
+//            String testScript = "test.py -ef hey -rf hoi -no output -co output_cyto"; //temp var
+//            //TODO Remove above test variables
 
 
-            String cmdline = "python3 " +  pyPath + testExecute; //Replace "testScript" variable with "scriptToExecute"
+            String cmdline = "python3 " +  pyPath + scriptToExecute; //Replace "testScript" variable with "scriptToExecute"
             process = Runtime.getRuntime().exec(cmdline);
             mProcess = process;
 
