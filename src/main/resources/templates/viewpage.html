@@ -204,7 +204,7 @@
                     search_query.hidden = false;
                     cy_canvas.hidden = false; //Show cytoscape canvas
                     if(cycle_cy) {
-                        cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData, layout : conc_layout, style: cyto_style});
+                        cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData, layout : conc_layout, style: create_stylesheet()});
                         cycle_cy = false;
                         // script for clickable node
                         cy.on('click', 'node', function(event) {
@@ -256,6 +256,98 @@
                 cycle_cy = true;
             }
         });
+    }
+
+    var create_stylesheet = function(){
+        let to_return = [];
+        let first_line =
+            {
+                'selector': 'node', 'style': {'content': 'data(label)', 'background-color': 'BlueViolet'}
+            };
+        let second_line =
+            {
+                'selector': 'edge', 'style': {'label': 'data(score)'}
+            };
+        let last_line = {
+            'selector': ':selected',
+            'style': {
+                'background-color': 'SteelBlue', 'line-color': 'black', 'target-arrow-color': 'black', 'source-arrow-color': 'black'}
+        };
+        //Push the first two line into the array.
+        to_return.push(first_line);
+        to_return.push(second_line);
+        for(let i = 0; i <= 255; i++){
+            var cat = `.cat_${i}`;
+            var colour = rgb_generator_no_loop(i);
+            var to_append =
+                {
+                    'selector': cat, 'style': {'line-color': colour}
+                };
+            to_return.push(to_append); //Push each line into the array.
+        }
+
+        to_return.push(last_line); //add the last line.
+        return to_return;
+    }
+
+    var rgb_generator = function(seed){
+        //goal to go from 255,0,0 -> 0,255,0 -> 0, 0, 255.
+        //first green goes up, then blue down, then red up then green down.
+        let r = 0;
+        let g = 0;
+        let b = 255;
+
+
+        for(let i = 0; i < (seed*4); i++){
+            if(i < 255){
+                g += 1;
+            }
+            else if(i < (255*2)){
+                if( b > 0)
+                    b -= 1;
+            }
+            else if(i < (255*3)){
+                if(r < 255)
+                    r += 1;
+            }
+            else{
+                if(g > 0)
+                    g -= 1;
+            }
+        }
+        //return `rgb(255,0, 255)`;
+        console.log(`rgb(${r},${g},${b})`);
+        return `rgb(${r},${g},${b})`;
+    }
+
+    var rgb_generator_no_loop = function(seed){
+        //goal to go from 255,0,0 -> 0,255,0 -> 0, 0, 255.
+        //first green goes up, then blue down, then red up then green down.
+        let r = 0;
+        let g = 0;
+        let b = 255;
+        let mod_seed = seed*4
+
+        if(mod_seed < 255){
+            g = mod_seed;
+        }
+        if(mod_seed < (255*2) && mod_seed >= 255){
+            b -= mod_seed - 255;
+            g = 255;
+        }
+        if(mod_seed < (255*3) && mod_seed >= (255*2)){
+            r =  (mod_seed - (255*2));
+            g = 255;
+            b = 0;
+        }
+        else{
+            if(mod_seed >= (255*3)){
+                g = 255 - (mod_seed - (255*3));
+                b =0;
+                r = 255;
+            }
+        }
+        return `rgb(${r},${g},${b})`;
     }
 
     // Retrieve data every 2 seconds and update the results tables

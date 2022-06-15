@@ -1,7 +1,9 @@
 #!/usr/bin/python3
 
 from ast import arg, arguments
+##from asyncio.windows_events import NULL
 import json
+from logging import NullHandler
 from platform import node
 #import asyncio.windows_events
 from tokenize import String
@@ -34,6 +36,8 @@ remove_edges = True  # True of False, for removing lowest scoring edges (while k
 
 ##arguments
 args = None
+
+
 
 ##Parses arguments 
 def parseArgs():
@@ -399,6 +403,9 @@ def write_json_output(df, out_f):
     nodes_to_append = []
     nodes_out = []
     edges_out = []
+    #For the colour-map
+    lowest_score = None
+    highest_score = None
 
 
     #Checks all genes in query and reference puts every unique entry in an index.
@@ -412,12 +419,26 @@ def write_json_output(df, out_f):
         nodes_out.append({"data": {"id" : node , "label": node}})#"node_{}".format(entry_id)}})
         #entry_id += 1
 
+    #Determine min and max scores. This has to happen here before the catagories are assigned. 
+    for node1 in df.columns.values:
+        for node2 in df.index:
+            if df[node1][node2] != 0:
+                if highest_score is None or lowest_score is None: #Assign both highest and lowest scores for further processing. 
+                    if highest_score is None or df[node1][node2] > highest_score:
+                        highest_score = df[node1][node2]
+                    else:
+                        lowest_score = df[node1][node2]
+                elif df[node1][node2] > highest_score: #higher score
+                    highest_score = df[node1][node2]
+                elif df[node1][node2] < lowest_score: #lowest score
+                    lowest_score = df[node1][node2]
+
     #create edges section
     for node1 in df.columns.values:
         for node2 in df.index:
             if df[node1][node2] != 0:
                 edges_out.append({"data": {"id": "{}-{}".format(node1, node2), "source": node1, "target": node2, "score": str(df[node1][node2])},
-                 "classes" : sort_score(df[node1][node2])})
+                 "classes" : sort_score(df[node1][node2], highest_score, lowest_score)})
 
     
     #create final JSON
@@ -427,11 +448,16 @@ def write_json_output(df, out_f):
         json.dump(data_out, f)
     
     
-def sort_score(to_sort):
-    #Numbers should be between 0 and 999. By dividing by 10, we can create 20 groups that steps in 5
-    to_sort_div = round(to_sort / 10)
-    to_sort_div = round(to_sort_div / 5)
-    return "cat_{}".format(int(to_sort_div))
+
+def sort_score(to_sort, highest_score, lowest_score):
+
+    #print("to sort: {}, highest score: {}, lowest score: {}.".format(to_sort, highest_score, lowest_score))
+    delta_distance = highest_score - lowest_score
+    catagory_steps = 255 / delta_distance
+    adjusted_entry = to_sort - lowest_score
+    entry_scale = adjusted_entry * catagory_steps
+    rounded_entry = round(entry_scale)
+    return "cat_{}".format(rounded_entry) #0.85284281
    
 
 def write(data, file):
