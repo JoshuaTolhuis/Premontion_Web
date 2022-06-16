@@ -4,8 +4,6 @@
     <!-- cytoscape -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.1.0/cytoscape.min.js"></script>
-    <script src='jquery.cytoscape.js-toolbar.js'></script>
-
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link th:href="@{/stylesheets/viewpage.css}" rel="stylesheet" type="text/css"/>
 
@@ -36,6 +34,13 @@
                    aria-label="Search through site content"/>
             <button id="btn search" class = "btn search" type="submit">Search</button>
        </form>
+        <form>
+            <label for="quantity_min">Trim bottom values</label>
+            <input type="number" id="quantity_min" name="quantity_min" min="0" max="99">
+            <label for="quantity_max">Trim top values</label>
+            <input type="number" id="quantity_max" name="quantity_max" min="1" max="100">
+            <button onclick="start_cyto()">Show results.</button>
+        </form>
     </li>
 </ul>
 <div id="cy" style="width: 100%; height: 80%; position: absolute; top: 90px; left: 0px;"></div>
@@ -47,7 +52,6 @@
 <script>
 
     clicked = false
-
     var dataLocation = "[[${location}]]";
     var tempID = "12345" //Temp var delete later.
     var tempCounter = 0; //Temp var delete later.
@@ -60,6 +64,11 @@
     var search_form = document.getElementById('btn search');
     var search_query = document.getElementById('qry search')
     var cy_canvas =  document.getElementById('cy');
+    let btm_cutoff = document.getElementById("quantity_min");
+    let top_cutoff = document.getElementById("quantity_max");
+    btm_cutoff.value = 0;
+    top_cutoff.value = 100;
+
     cy_canvas.hidden = true; //Set the cytoscape canvas to hide when page is first loaded.
     download_but.hidden = true;
     search_form.hidden = true;
@@ -124,37 +133,38 @@
                     search_query.hidden = false;
                     cy_canvas.hidden = false; //Show cytoscape canvas
                     if(cycle_cy) {
-                        cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData, layout : conc_layout, style: create_stylesheet()});
-                        cycle_cy = false;
-                        // script for clickable node
-                        cy.on('click', 'node', function(event) {
-                            // get node a
-                            let node_a = event.target;
-
-                            // get edges to -> b and c
-                            let connected_edges = node_a.connectedEdges()
-
-                            // get source and target nodes -> a, b and c
-                            let connected_nodes = connected_edges.connectedNodes()
-
-                            // Then you can remove the unwanted nodes
-                            // If you want, you can save removed_nodes to local storage and add them to the grap at a later point
-                            if(clicked == false) {
-                                removed_nodes = cy.remove(cy.nodes().not(connected_nodes.union(connected_edges)))
-                                clicked = true
-                                cy.run()
-                            }
-                            // You can run the layout directly on the new graph
-
-                        })
-                        cy.on('tap', function(event){
-                                if(clicked == true) {
-                                    removed_nodes.restore()
-                                    clicked = false
-                                }
-                                cy.run()
-                            }
-                        )
+                        start_cyto();
+                        // cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData, layout : conc_layout, style: create_stylesheet()});
+                        // cycle_cy = false;
+                        // // script for clickable node
+                        // cy.on('click', 'node', function(event) {
+                        //     // get node a
+                        //     let node_a = event.target;
+                        //
+                        //     // get edges to -> b and c
+                        //     let connected_edges = node_a.connectedEdges()
+                        //
+                        //     // get source and target nodes -> a, b and c
+                        //     let connected_nodes = connected_edges.connectedNodes()
+                        //
+                        //     // Then you can remove the unwanted nodes
+                        //     // If you want, you can save removed_nodes to local storage and add them to the grap at a later point
+                        //     if(clicked == false) {
+                        //         removed_nodes = cy.remove(cy.nodes().not(connected_nodes.union(connected_edges)))
+                        //         clicked = true
+                        //         cy.run()
+                        //     }
+                        //     // You can run the layout directly on the new graph
+                        //
+                        // })
+                        // cy.on('tap', function(event){
+                        //         if(clicked == true) {
+                        //             removed_nodes.restore()
+                        //             clicked = false
+                        //         }
+                        //         cy.run()
+                        //     }
+                        // )
                     }
                 }
             else{
@@ -178,7 +188,50 @@
         });
     }
 
-    var create_stylesheet = function(){
+    var start_cyto = function()
+    {
+        //Check to prevent bottom cutoff to be greater than the top cutoff.
+        if(btm_cutoff.value >= top_cutoff.value){
+            if(top_cutoff.value > 0)
+                btm_cutoff.setAttribute('value', (top_cutoff.value - 1));
+            else
+                top_cutoff.setAttribute('value', (btm_cutoff.value + 1));
+        }
+        let styling = create_stylesheet(btm_cutoff.value, top_cutoff.value)
+        cy = cytoscape({container: document.getElementById('cy'), elements: fetchedData, layout : conc_layout, style: styling});
+        cycle_cy = false;
+        // script for clickable node
+        cy.on('click', 'node', function(event) {
+            // get node a
+            let node_a = event.target;
+
+            // get edges to -> b and c
+            let connected_edges = node_a.connectedEdges()
+
+            // get source and target nodes -> a, b and c
+            let connected_nodes = connected_edges.connectedNodes()
+
+            // Then you can remove the unwanted nodes
+            // If you want, you can save removed_nodes to local storage and add them to the grap at a later point
+            if(clicked == false) {
+                removed_nodes = cy.remove(cy.nodes().not(connected_nodes.union(connected_edges)))
+                clicked = true
+                cy.run()
+            }
+            // You can run the layout directly on the new graph
+
+        })
+        cy.on('tap', function(event){
+                if(clicked == true) {
+                    removed_nodes.restore()
+                    clicked = false
+                }
+                cy.run()
+            }
+        )
+    }
+
+    var create_stylesheet = function(btn_trim, top_trim){
         let to_return = [];
         let first_line =
             {
@@ -196,10 +249,13 @@
         //Push the first two line into the array.
         to_return.push(first_line);
         to_return.push(second_line);
-        for(let i = 0; i <= 255; i++){
-            var cat = `.cat_${i}`;
-            var colour = rgb_generator_no_loop(i);
-            var to_append =
+        for(let i = 0; i <= 200; i++) {
+            let colour = 'DarkGrey';
+            if ((i / 2) >= btn_trim && (i / 2) <= top_trim) {
+               colour = rgb_generator_no_loop(i);
+            }
+            let cat = `.cat_${i}`;
+            let to_append =
                 {
                     'selector': cat, 'style': {'line-color': colour}
                 };
@@ -246,7 +302,7 @@
         let r = 0;
         let g = 0;
         let b = 255;
-        let mod_seed = seed*4
+        let mod_seed = ((255*4) / 200) * seed;
 
         if(mod_seed < 255){
             g = mod_seed;
