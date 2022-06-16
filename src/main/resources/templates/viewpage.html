@@ -4,6 +4,8 @@
     <!-- cytoscape -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.1.0/cytoscape.min.js"></script>
+    <script src='jquery.cytoscape.js-toolbar.js'></script>
+
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link th:href="@{/stylesheets/viewpage.css}" rel="stylesheet" type="text/css"/>
 
@@ -28,12 +30,10 @@
         </form>
     </li>
     <li>
-        <form th:action="@{/nodesearcher}" method="post">
-            <input type="search" id="qry search"
-                   placeholder="Search..."
-                   aria-label="Search through site content"/>
-            <button id="btn search" class = "btn search" type="submit">Search</button>
-       </form>
+        <form class="form">
+            <input id="search" type="text" class="input" placeholder="search..."/>
+            <button id="run" class="run-search">search</button>
+        </form>
         <form>
             <label for="quantity_min">Trim bottom values</label>
             <input type="number" id="quantity_min" name="quantity_min" min="0" max="99">
@@ -52,6 +52,7 @@
 <script>
 
     clicked = false
+
     var dataLocation = "[[${location}]]";
     var tempID = "12345" //Temp var delete later.
     var tempCounter = 0; //Temp var delete later.
@@ -338,18 +339,25 @@
     // script for the search bar
     // search_form
     // search_query
-    function submitted(event) {
-        let filter = search_query.toUpperCase()
-        for (i = 0; i < li.length; i++){
-            let nodeList = cy.nodes();
-            cy.filter(filter)
-            cy.run()
-        }
 
+    search_form.addEventListener("search", (search_query) =>{
 
-        cy.$(`[id] = ${filter}`)
+    })
+    function runSearch(){
+        console.log(cy.getElementById(value))
     }
-    search_form.addEventListener('submit', submitted);
+        // let value = e.target.value
+        //
+        // if (value && value.trim().length > 0) {
+        //     value = value.trim().toUpperCase()
+        //     runSearch(value)
+        //     //returning only the results of setList if the value of the search is included in the person's name
+        // }else {
+        //     //return nothing
+        //     clearList()
+        //
+        // }
+
 
 
 </script>
